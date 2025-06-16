@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Verify OTP</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <!-- Fonts + Styling -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    * {
+      box-sizing: border-box;
+      font-family: 'Inter', sans-serif;
+    }
+
+    body {
+      margin: 0;
+      padding: 0;
+      background: linear-gradient(to right, #dfe9f3, #ffffff);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+    }
+
+    .otp-container {
+      background: #fff;
+      padding: 3rem;
+      border-radius: 16px;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+      width: 100%;
+      max-width: 420px;
+      text-align: center;
+      animation: fadeIn 0.6s ease-in-out;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    h2 {
+      font-weight: 600;
+      color: #333;
+      margin-bottom: 0.5rem;
+    }
+
+    p.subtitle {
+      font-size: 0.95rem;
+      color: #777;
+      margin-bottom: 2rem;
+    }
+
+    input[type="text"] {
+      width: 100%;
+      padding: 12px 16px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      margin-bottom: 1.5rem;
+      font-size: 1rem;
+      transition: border-color 0.3s ease;
+    }
+
+    input[type="text"]:focus {
+      border-color: #4a90e2;
+      outline: none;
+    }
+
+    button {
+      width: 100%;
+      padding: 12px;
+      font-size: 1rem;
+      font-weight: 600;
+      background-color: #4a90e2;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+
+    button:hover {
+      background-color: #3a78c2;
+    }
+
+    .messages {
+      margin-bottom: 1rem;
+    }
+
+    .messages .error {
+      background: #ffe0e0;
+      color: #d40000;
+      padding: 10px;
+      border-radius: 6px;
+      margin-bottom: 1rem;
+    }
+
+    .messages .success {
+      background: #e0ffe7;
+      color: #009a34;
+      padding: 10px;
+      border-radius: 6px;
+      margin-bottom: 1rem;
+    }
+  </style>
+</head>
+<body>
+  <div class="otp-container">
+    <h2>Verify Your Email</h2>
+    <p class="subtitle">We've sent a code to <strong>{{ email }}</strong>. Please enter it below.</p>
+
+    <div class="messages">
+      {% for message in messages %}
+        <div class="{{ message.tags }}">{{ message }}</div>
+      {% endfor %}
+    </div>
+
+    <form method="POST">
+      {% csrf_token %}
+      <input type="text" name="otp_code" placeholder="Enter your OTP code" required>
+      <button type="submit">Verify</button>
+    </form>
+  </div>
+</body>
+</html>

@@ -1,0 +1,1002 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ContextMe - Dashboard</title>
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/foundation/6.8.1/css/foundation.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/foundation/6.8.1/css/foundation-icons.min.css">
+    
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@400;500;600&display=swap');
+        
+        :root {
+            --primary: #e879f9;
+            --primary-light: #f3e8ff;
+            --primary-dark: #c026d3;
+            --secondary: #f97316;
+            --accent: #06b6d4;
+            --success: #22c55e;
+            --warning: #f59e0b;
+            
+            --pink-50: #fdf2f8;
+            --pink-100: #fce7f3;
+            --pink-200: #fbcfe8;
+            --pink-500: #ec4899;
+            
+            --purple-50: #faf5ff;
+            --purple-100: #f3e8ff;
+            --purple-500: #a855f7;
+            
+            --blue-50: #eff6ff;
+            --blue-100: #dbeafe;
+            --blue-500: #3b82f6;
+            
+            --gray-50: #f9fafb;
+            --gray-100: #f3f4f6;
+            --gray-200: #e5e7eb;
+            --gray-400: #9ca3af;
+            --gray-500: #6b7280;
+            --gray-600: #4b5563;
+            --gray-800: #1f2937;
+            --gray-900: #111827;
+            
+            --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+            --shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
+            --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+            --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+            --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            background: linear-gradient(135deg, var(--pink-50) 0%, var(--purple-50) 50%, var(--blue-50) 100%);
+            min-height: 100vh;
+            font-family: 'Inter', sans-serif;
+            color: var(--gray-800);
+            line-height: 1.6;
+        }
+
+        .dashboard-container {
+            min-height: 100vh;
+            background: transparent;
+        }
+
+        /* Header */
+        .dashboard-header {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--gray-200);
+            padding: 1.5rem 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .user-welcome {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .user-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+            font-size: 1.25rem;
+            box-shadow: var(--shadow-md);
+        }
+
+        .welcome-text h1 {
+            margin: 0 0 0.25rem 0;
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--gray-900);
+            font-family: 'Playfair Display', serif;
+        }
+
+        .welcome-text p {
+            margin: 0;
+            color: var(--gray-500);
+            font-size: 0.875rem;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 0.75rem;
+            align-items: center;
+        }
+
+        .notification-bell {
+            position: relative;
+            background: var(--gray-100);
+            border: 1px solid var(--gray-200);
+            border-radius: 8px;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            color: var(--gray-600);
+        }
+
+        .notification-bell:hover {
+            background: var(--gray-50);
+            transform: translateY(-1px);
+        }
+
+        .notification-badge {
+            position: absolute;
+            top: -4px;
+            right: -4px;
+            background: var(--primary);
+            color: white;
+            border-radius: 50%;
+            width: 16px;
+            height: 16px;
+            font-size: 0.625rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border-radius: 16px;
+            margin: 1rem;
+            box-shadow: var(--shadow);
+            border: 1px solid var(--gray-200);
+            height: fit-content;
+            max-height: calc(100vh - 140px);
+            overflow-y: auto;
+        }
+
+        .sidebar-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid var(--gray-100);
+        }
+
+        .sidebar-title {
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--gray-900);
+            margin: 0;
+            font-family: 'Playfair Display', serif;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            padding: 0.75rem 1.5rem;
+            color: var(--gray-600);
+            text-decoration: none;
+            transition: all 0.2s ease;
+            font-weight: 500;
+            font-size: 0.875rem;
+        }
+
+        .nav-item:hover {
+            background: var(--pink-50);
+            color: var(--primary-dark);
+            text-decoration: none;
+        }
+
+        .nav-item.active {
+            background: var(--primary-light);
+            color: var(--primary-dark);
+            border-right: 3px solid var(--primary);
+        }
+
+        .nav-item i {
+            margin-right: 0.75rem;
+            width: 16px;
+            font-size: 1rem;
+        }
+
+        /* Main Content */
+        .main-content {
+            padding: 2rem;
+        }
+
+        /* Stats Grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.25rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            padding: 1.5rem;
+            border-radius: 16px;
+            box-shadow: var(--shadow);
+            border: 1px solid var(--gray-200);
+            text-align: center;
+            transition: all 0.2s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .stat-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            margin: 0 auto 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.25rem;
+            color: white;
+        }
+
+        .stat-card.identities .stat-icon { background: linear-gradient(135deg, var(--primary), var(--primary-dark)); }
+        .stat-card.verified .stat-icon { background: linear-gradient(135deg, var(--success), #16a34a); }
+        .stat-card.contexts .stat-icon { background: linear-gradient(135deg, var(--accent), #0891b2); }
+        .stat-card.privacy .stat-icon { background: linear-gradient(135deg, var(--secondary), #ea580c); }
+
+        .stat-number {
+            font-size: 1.875rem;
+            font-weight: 700;
+            color: var(--gray-900);
+            margin-bottom: 0.25rem;
+            line-height: 1;
+        }
+
+        .stat-label {
+            color: var(--gray-500);
+            font-size: 0.875rem;
+            font-weight: 500;
+        }
+
+        /* Content Cards */
+        .content-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border-radius: 16px;
+            box-shadow: var(--shadow);
+            margin-bottom: 1.5rem;
+            border: 1px solid var(--gray-200);
+            overflow: hidden;
+        }
+
+        .card-header {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white;
+            padding: 1.25rem 1.5rem;
+            font-weight: 600;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.875rem;
+        }
+
+        .card-body {
+            padding: 1.5rem;
+        }
+
+        /* Identity Grid */
+        .identity-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 1rem;
+        }
+
+        .identity-card {
+            border: 1px solid var(--gray-200);
+            border-radius: 12px;
+            padding: 1.25rem;
+            background: white;
+            transition: all 0.2s ease;
+            position: relative;
+        }
+
+        .identity-card:hover {
+            transform: translateY(-1px);
+            box-shadow: var(--shadow-md);
+            border-color: var(--context-color);
+        }
+
+        .identity-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: var(--context-gradient);
+            border-radius: 12px 12px 0 0;
+        }
+
+        /* Context Badges */
+        .context-badge {
+            display: inline-flex;
+            align-items: center;
+            padding: 0.375rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            margin-bottom: 0.75rem;
+        }
+
+        .context-professional { background: var(--blue-100); color: var(--blue-500); --context-color: var(--blue-500); --context-gradient: var(--blue-500); }
+        .context-social { background: var(--pink-100); color: var(--pink-500); --context-color: var(--pink-500); --context-gradient: var(--pink-500); }
+        .context-medical { background: var(--purple-100); color: var(--purple-500); --context-color: var(--purple-500); --context-gradient: var(--purple-500); }
+        .context-legal { background: var(--gray-100); color: var(--gray-600); --context-color: var(--gray-500); --context-gradient: var(--gray-500); }
+
+        .identity-details h4 {
+            margin: 0 0 0.75rem 0;
+            color: var(--gray-900);
+            font-size: 1rem;
+            font-weight: 600;
+            font-family: 'Playfair Display', serif;
+        }
+
+        .identity-field {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.5rem;
+            font-size: 0.875rem;
+        }
+
+        .field-label {
+            color: var(--gray-500);
+            font-weight: 500;
+        }
+
+        .field-value {
+            color: var(--gray-900);
+            font-weight: 500;
+        }
+
+        .status-indicator {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.375rem;
+            background: var(--success);
+            color: white;
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            margin-top: 0.75rem;
+        }
+
+        /* Privacy Settings */
+        .privacy-setting {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem;
+            border: 1px solid var(--gray-200);
+            border-radius: 8px;
+            margin-bottom: 0.75rem;
+            background: white;
+        }
+
+        .privacy-info h4 {
+            margin: 0 0 0.25rem 0;
+            color: var(--gray-900);
+            font-size: 0.875rem;
+            font-weight: 600;
+        }
+
+        .privacy-info p {
+            margin: 0;
+            color: var(--gray-500);
+            font-size: 0.75rem;
+        }
+
+        .toggle-switch {
+            position: relative;
+            width: 44px;
+            height: 24px;
+            background: var(--gray-200);
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .toggle-switch.active {
+            background: var(--primary);
+        }
+
+        .toggle-switch::after {
+            content: '';
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            width: 20px;
+            height: 20px;
+            background: white;
+            border-radius: 50%;
+            transition: all 0.2s ease;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .toggle-switch.active::after {
+            transform: translateX(20px);
+        }
+
+        /* Action Buttons */
+        .action-btn {
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            border: none;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.75rem;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.375rem;
+            transition: all 0.2s ease;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-dark);
+            transform: translateY(-1px);
+        }
+
+        .btn-outline {
+            background: transparent;
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .btn-outline:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        /* Activity Log */
+        .activity-item {
+            display: flex;
+            align-items: center;
+            padding: 0.75rem;
+            border-radius: 8px;
+            margin-bottom: 0.75rem;
+            background: var(--gray-50);
+            border: 1px solid var(--gray-100);
+        }
+
+        .activity-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 0.75rem;
+            font-size: 0.875rem;
+            color: white;
+        }
+
+        .activity-create { background: var(--primary); }
+        .activity-update { background: var(--secondary); }
+        .activity-verify { background: var(--success); }
+
+        .activity-content h5 {
+            margin: 0 0 0.125rem 0;
+            color: var(--gray-900);
+            font-weight: 600;
+            font-size: 0.875rem;
+        }
+
+        .activity-time {
+            color: var(--gray-500);
+            font-size: 0.75rem;
+            margin: 0;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .sidebar {
+                margin: 0.5rem;
+                margin-bottom: 1rem;
+            }
+            
+            .main-content {
+                padding: 1rem;
+            }
+            
+            .stats-grid {
+                grid-template-columns: 1fr;
+                gap: 0.75rem;
+            }
+            
+            .identity-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .user-welcome {
+                flex-direction: column;
+                text-align: center;
+                gap: 0.75rem;
+            }
+        }
+
+        /* Animations */
+        .fade-in {
+            animation: fadeInUp 0.6s ease forwards;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard-container">
+        <!-- Header -->
+        <header class="dashboard-header">
+            <div class="grid-container">
+                <div class="grid-x align-middle">
+                    <div class="cell auto">
+                        <div class="user-welcome">
+                            <div class="user-avatar">A</div>
+                            <div class="welcome-text">
+                                <h1>Welcome back, {{ username|default:"Friend" }}</h1>
+                                <p>Manage your digital identities with confidence</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="cell shrink">
+                        <div class="header-actions">
+                            <button class="notification-bell">
+                                <i class="fi-bell"></i>
+                                <span class="notification-badge">2</span>
+                            </button>
+                            <a href="#" class="action-btn btn-primary">
+                                <i class="fi-plus"></i> New Identity
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Layout -->
+        <div class="grid-container fluid">
+            <div class="grid-x">
+                <!-- Sidebar -->
+                <div class="cell medium-3 large-2">
+                    <nav class="sidebar">
+                        <div class="sidebar-header">
+                            <h3 class="sidebar-title">Navigation</h3>
+                        </div>
+                        <a href="#overview" class="nav-item active">
+                            <i class="fi-graph-trend"></i> Overview
+                        </a>
+                        <a href="/main/personas/user/{{ user_id }}" class="nav-item">
+                            <i class="fi-torso"></i> My Identities
+                        </a>
+                        <a href="#privacy" class="nav-item">
+                            <i class="fi-lock"></i> Privacy Settings
+                        </a>
+                        <a href="#activity" class="nav-item">
+                            <i class="fi-list"></i> Activity Log
+                        </a>
+                        <a href="#settings" class="nav-item">
+                            <i class="fi-widget"></i> Settings
+                        </a>
+                    </nav>
+                </div>
+
+                <!-- Main Content -->
+                <div class="cell medium-9 large-10">
+                    <main class="main-content">
+                        <!-- Stats Overview -->
+                        <div class="stats-grid">
+                            <div class="stat-card identities fade-in">
+                                <div class="stat-icon">
+                                    <i class="fi-torso"></i>
+                                </div>
+                                <div class="stat-number">5</div>
+                                <div class="stat-label">Active Identities</div>
+                            </div>
+                            <div class="stat-card verified fade-in" style="animation-delay: 0.1s;">
+                                <div class="stat-icon">
+                                    <i class="fi-check"></i>
+                                </div>
+                                <div class="stat-number">3</div>
+                                <div class="stat-label">Verified Profiles</div>
+                            </div>
+                            <div class="stat-card contexts fade-in" style="animation-delay: 0.2s;">
+                               <div class="stat-icon">
+                                    <i class="fi-web"></i>
+                                </div>
+                                <div class="stat-number">4</div>
+                                <div class="stat-label">Active Contexts</div>
+                            </div>
+                            <div class="stat-card privacy fade-in" style="animation-delay: 0.3s;">
+                                <div class="stat-icon">
+                                    <i class="fi-lock"></i>
+                                </div>
+                                <div class="stat-number">8</div>
+                                <div class="stat-label">Privacy Controls</div>
+                            </div>
+                        </div>
+
+                        <!-- Identity Cards -->
+                        <div class="content-card fade-in" style="animation-delay: 0.4s;">
+                            <div class="card-header">
+                                <span>Your Digital Identities</span>
+                                <a href="#" class="action-btn btn-outline">
+                                    <i class="fi-plus"></i> Add New
+                                </a>
+                            </div>
+                            <div class="card-body">
+                                <div class="identity-grid">
+                                    <!-- Professional Identity -->
+                                    <div class="identity-card context-professional">
+                                        <div class="context-badge context-professional">Professional</div>
+                                        <div class="identity-details">
+                                            <h4>Work Profile</h4>
+                                            <div class="identity-field">
+                                                <span class="field-label">Name:</span>
+                                                <span class="field-value">Alexandra Chen</span>
+                                            </div>
+                                            <div class="identity-field">
+                                                <span class="field-label">Title:</span>
+                                                <span class="field-value">Product Manager</span>
+                                            </div>
+                                            <div class="identity-field">
+                                                <span class="field-label">Company:</span>
+                                                <span class="field-value">TechFlow Inc.</span>
+                                            </div>
+                                            <div class="status-indicator">
+                                                <i class="fi-check"></i> Verified
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Social Identity -->
+                                    <div class="identity-card context-social">
+                                        <div class="context-badge context-social">Social</div>
+                                        <div class="identity-details">
+                                            <h4>Social Media</h4>
+                                            <div class="identity-field">
+                                                <span class="field-label">Handle:</span>
+                                                <span class="field-value">@alex_designs</span>
+                                            </div>
+                                            <div class="identity-field">
+                                                <span class="field-label">Platform:</span>
+                                                <span class="field-value">Instagram</span>
+                                            </div>
+                                            <div class="identity-field">
+                                                <span class="field-label">Followers:</span>
+                                                <span class="field-value">1.2K</span>
+                                            </div>
+                                            <div class="status-indicator">
+                                                <i class="fi-check"></i> Active
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Medical Identity -->
+                                    <div class="identity-card context-medical">
+                                        <div class="context-badge context-medical">Medical</div>
+                                        <div class="identity-details">
+                                            <h4>Healthcare Profile</h4>
+                                            <div class="identity-field">
+                                                <span class="field-label">Patient ID:</span>
+                                                <span class="field-value">HC-2024-***</span>
+                                            </div>
+                                            <div class="identity-field">
+                                                <span class="field-label">Provider:</span>
+                                                <span class="field-value">Metro Health</span>
+                                            </div>
+                                            <div class="identity-field">
+                                                <span class="field-label">Emergency Contact:</span>
+                                                <span class="field-value">Michael Chen</span>
+                                            </div>
+                                            <div class="status-indicator" style="background: var(--warning);">
+                                                <i class="fi-clock"></i> Pending
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Legal Identity -->
+                                    <div class="identity-card context-legal">
+                                        <div class="context-badge context-legal">Legal</div>
+                                        <div class="identity-details">
+                                            <h4>Legal Documents</h4>
+                                            <div class="identity-field">
+                                                <span class="field-label">Legal Name:</span>
+                                                <span class="field-value">Alexandra M. Chen</span>
+                                            </div>
+                                            <div class="identity-field">
+                                                <span class="field-label">ID Number:</span>
+                                                <span class="field-value">***-**-5678</span>
+                                            </div>
+                                            <div class="identity-field">
+                                                <span class="field-label">Status:</span>
+                                                <span class="field-value">Verified Citizen</span>
+                                            </div>
+                                            <div class="status-indicator">
+                                                <i class="fi-check"></i> Verified
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Privacy Settings -->
+                        <div class="content-card fade-in" style="animation-delay: 0.6s;">
+                            <div class="card-header">
+                                <span>Privacy & Consent Management</span>
+                            </div>
+                            <div class="card-body">
+                                <div class="privacy-setting">
+                                    <div class="privacy-info">
+                                        <h4>Personalized Experience</h4>
+                                        <p>Allow customized content based on your preferences</p>
+                                    </div>
+                                    <div class="toggle-switch active" onclick="toggleSwitch(this)"></div>
+                                </div>
+
+                                <div class="privacy-setting">
+                                    <div class="privacy-info">
+                                        <h4>Analytics & Insights</h4>
+                                        <p>Help improve our services with anonymous usage data</p>
+                                    </div>
+                                    <div class="toggle-switch" onclick="toggleSwitch(this)"></div>
+                                </div>
+
+                                <div class="privacy-setting">
+                                    <div class="privacy-info">
+                                        <h4>Marketing Communications</h4>
+                                        <p>Receive updates about new features and services</p>
+                                    </div>
+                                    <div class="toggle-switch" onclick="toggleSwitch(this)"></div>
+                                </div>
+
+                                <div style="margin-top: 1.5rem; padding-top: 1.5rem; border-top: 1px solid var(--gray-100);">
+                                    <div style="display: flex; gap: 0.75rem; flex-wrap: wrap;">
+                                        <a href="#" class="action-btn btn-primary">
+                                            <i class="fi-download"></i> Download Data
+                                        </a>
+                                        <a href="#" class="action-btn" style="background: var(--gray-100); color: var(--gray-600);">
+                                            <i class="fi-pencil"></i> Update Info
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Activity Log -->
+                        <div class="content-card fade-in" style="animation-delay: 0.8s;">
+                            <div class="card-header">
+                                <span>Recent Activity</span>
+                                <a href="#" class="action-btn btn-outline">View All</a>
+                            </div>
+                            <div class="card-body">
+                                <div class="activity-item">
+                                    <div class="activity-icon activity-create">
+                                        <i class="fi-plus"></i>
+                                    </div>
+                                    <div class="activity-content">
+                                        <h5>New social identity created</h5>
+                                        <p class="activity-time">2 hours ago</p>
+                                    </div>
+                                </div>
+
+                                <div class="activity-item">
+                                    <div class="activity-icon activity-update">
+                                        <i class="fi-pencil"></i>
+                                    </div>
+                                    <div class="activity-content">
+                                        <h5>Professional profile updated</h5>
+                                        <p class="activity-time">1 day ago</p>
+                                    </div>
+                                </div>
+                                <div class="activity-item">
+                                    <div class="activity-icon activity-verify">
+                                        <i class="fi-check"></i>
+                                    </div>
+                                    <div class="activity-content">
+                                        <h5>Medical profile verified</h5>
+                                        <p class="activity-time">3 days ago</p>
+                                    </div>
+                                </div>
+
+                                <div class="activity-item">
+                                    <div class="activity-icon activity-update">
+                                        <i class="fi-widget"></i>
+                                    </div>
+                                    <div class="activity-content">
+                                        <h5>Privacy settings updated</h5>
+                                        <p class="activity-time">1 week ago</p>
+                                    </div>
+                                </div>
+
+                                <div class="activity-item">
+                                    <div class="activity-icon activity-create">
+                                        <i class="fi-torso"></i>
+                                    </div>
+                                    <div class="activity-content">
+                                        <h5>Legal identity registered</h5>
+                                        <p class="activity-time">2 weeks ago</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </main>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Foundation JavaScript -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/foundation/6.8.1/js/foundation.min.js"></script>
+    
+    <script>
+        // Initialize Foundation
+        $(document).foundation();
+
+        // Toggle switch functionality
+        function toggleSwitch(element) {
+            element.classList.toggle('active');
+        }
+
+        // Navigation active state management
+        document.querySelectorAll('.nav-item').forEach(item => {
+            item.addEventListener('click', function(e) {
+                e.preventDefault();
+                
+                // Remove active class from all nav items
+                document.querySelectorAll('.nav-item').forEach(nav => {
+                    nav.classList.remove('active');
+                });
+                
+                // Add active class to clicked item
+                this.classList.add('active');
+                
+                // Get the target section
+                const target = this.getAttribute('href').replace('#', '');
+                
+                // Show/hide content sections (simplified for demo)
+                console.log('Navigating to:', target);
+            });
+        });
+
+        // Notification bell interaction
+        document.querySelector('.notification-bell').addEventListener('click', function() {
+            alert('You have 2 new notifications:\n• Identity verification complete\n• New privacy policy update');
+        });
+
+        // Add new identity button
+        document.querySelectorAll('a[href="#"]').forEach(btn => {
+            if (btn.textContent.includes('New Identity') || btn.textContent.includes('Add New')) {
+                btn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    alert('Create New Identity feature coming soon!');
+                });
+            }
+        });
+
+        // Download data functionality
+        document.addEventListener('click', function(e) {
+            if (e.target.closest('.action-btn') && e.target.textContent.includes('Download Data')) {
+                e.preventDefault();
+                alert('Data export initiated. You will receive an email with your data within 24 hours.');
+            }
+        });
+
+        // Identity card hover effects
+        document.querySelectorAll('.identity-card').forEach(card => {
+            card.addEventListener('mouseenter', function() {
+                this.style.transform = 'translateY(-2px)';
+            });
+            
+            card.addEventListener('mouseleave', function() {
+                this.style.transform = 'translateY(0)';
+            });
+        });
+
+        // Smooth scroll for navigation (if implementing single-page navigation)
+        function smoothScroll(target) {
+            const element = document.getElementById(target);
+            if (element) {
+                element.scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'start'
+                });
+            }
+        }
+
+        // Add loading states for buttons
+        document.querySelectorAll('.action-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                if (!this.classList.contains('loading')) {
+                    const originalText = this.innerHTML;
+                    this.classList.add('loading');
+                    this.innerHTML = '<i class="fi-loading"></i> Loading...';
+                    
+                    setTimeout(() => {
+                        this.classList.remove('loading');
+                        this.innerHTML = originalText;
+                    }, 2000);
+                }
+            });
+        });
+
+        // Simulate real-time updates
+        function updateStats() {
+            const statNumbers = document.querySelectorAll('.stat-number');
+            statNumbers.forEach(stat => {
+                const currentValue = parseInt(stat.textContent);
+                // Randomly increment occasionally to simulate activity
+                if (Math.random() < 0.1) {
+                    stat.textContent = currentValue + 1;
+                    stat.style.color = 'var(--success)';
+                    setTimeout(() => {
+                        stat.style.color = 'var(--gray-900)';
+                    }, 1000);
+                }
+            });
+        }
+
+        // Update stats every 30 seconds
+        setInterval(updateStats, 30000);
+
+        // Add tooltips for status indicators
+        document.querySelectorAll('.status-indicator').forEach(indicator => {
+            indicator.title = indicator.textContent.trim() === 'Verified' ? 
+                'This identity has been verified and is ready to use' :
+                indicator.textContent.trim() === 'Active' ?
+                'This identity is currently active and in use' :
+                'This identity is pending verification';
+        });
+
+        // Keyboard accessibility
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                // Close any open modals or dropdowns
+                console.log('Escape pressed - closing overlays');
+            }
+        });
+
+        // Add animation delays to cards on page load
+        window.addEventListener('load', function() {
+            const fadeInElements = document.querySelectorAll('.fade-in');
+            fadeInElements.forEach((element, index) => {
+                element.style.animationDelay = `${index * 0.1}s`;
+            });
+        });
+    </script>
+</body>
+</html>
