@@ -565,7 +565,7 @@
                 <div class="grid-x align-middle">
                     <div class="cell auto">
                         <div class="user-welcome">
-                            <div class="user-avatar">A</div>
+                            <div class="user-avatar"></div>
                             <div class="welcome-text">
                                 <h1>Welcome back, {{ username|default:"Friend" }}</h1>
                                 <p>Manage your digital identities with confidence</p>
@@ -580,6 +580,9 @@
                             </button>
                             <a href="#" class="action-btn btn-primary">
                                 <i class="fi-plus"></i> New Identity
+                            </a>
+                             <a href="{% url 'logout' %}" class="action-btn" style="background: var(--gray-600); color: white;">
+                                <i class="fi-power"></i> Logout
                             </a>
                         </div>
                     </div>
@@ -608,7 +611,7 @@
                         <a href="#activity" class="nav-item">
                             <i class="fi-list"></i> Activity Log
                         </a>
-                        <a href="#settings" class="nav-item">
+                        <a href="{% url 'settings_account' %}" class="nav-item">
                             <i class="fi-widget"></i> Settings
                         </a>
                     </nav>

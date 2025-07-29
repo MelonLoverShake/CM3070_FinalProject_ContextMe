@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Privacy Policy - Consent Required</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .consent-container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            max-width: 600px;
+            width: 100%;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+            position: relative;
+        }
+
+        .user-greeting {
+            position: absolute;
+            top: 15px;
+            right: 20px;
+            background: rgba(255, 255, 255, 0.2);
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .user-greeting .username {
+            font-weight: bold;
+        }
+
+        .header h1 {
+            font-size: 2rem;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            opacity: 0.9;
+            font-size: 1.1rem;
+        }
+
+        .personalized-message {
+            background: rgba(255, 255, 255, 0.15);
+            padding: 15px;
+            margin-top: 15px;
+            border-radius: 10px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(5px);
+        }
+
+        .personalized-message p {
+            margin: 0;
+            font-size: 1rem;
+        }
+
+        .content-wrapper {
+            position: relative;
+            height: 400px;
+            overflow: hidden;
+        }
+
+        .privacy-content {
+            height: 100%;
+            overflow-y: auto;
+            padding: 30px;
+            line-height: 1.6;
+            color: #333;
+        }
+
+        .privacy-content h2 {
+            color: #4facfe;
+            margin: 20px 0 10px 0;
+            font-size: 1.3rem;
+        }
+
+        .privacy-content p {
+            margin-bottom: 15px;
+        }
+
+        .privacy-content ul {
+            margin: 10px 0 15px 20px;
+        }
+
+        .privacy-content li {
+            margin-bottom: 8px;
+        }
+
+        .scroll-indicator {
+            position: absolute;
+            top: 0;
+            left: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #4facfe, #00f2fe);
+            transition: width 0.3s ease;
+            z-index: 10;
+        }
+
+        .scroll-prompt {
+            position: absolute;
+            bottom: 20px;
+            right: 20px;
+            background: rgba(79, 172, 254, 0.9);
+            color: white;
+            padding: 10px 15px;
+            border-radius: 25px;
+            font-size: 0.9rem;
+            animation: bounce 2s infinite;
+            transition: opacity 0.3s ease;
+        }
+
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+            40% { transform: translateY(-10px); }
+            60% { transform: translateY(-5px); }
+        }
+
+        .footer {
+            padding: 30px;
+            background: #f8f9fa;
+            text-align: center;
+        }
+
+        .accept-button {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            border-radius: 30px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            opacity: 0.5;
+            pointer-events: none;
+            transform: scale(0.95);
+        }
+
+        .accept-button.enabled {
+            opacity: 1;
+            pointer-events: auto;
+            transform: scale(1);
+        }
+
+        .accept-button:hover.enabled {
+            transform: scale(1.05);
+            box-shadow: 0 10px 20px rgba(79, 172, 254, 0.3);
+        }
+
+        .status-message {
+            margin-top: 15px;
+            padding: 10px;
+            border-radius: 10px;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+
+        .status-incomplete {
+            background: #fff3cd;
+            color: #856404;
+            border: 1px solid #ffeaa7;
+        }
+
+        .status-complete {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .progress-text {
+            margin-top: 10px;
+            font-size: 0.9rem;
+            color: #666;
+        }
+
+        /* Guest user styling */
+        .guest-notice {
+            background: rgba(255, 193, 7, 0.15);
+            color: rgba(255, 255, 255, 0.9);
+            padding: 10px 15px;
+            margin-top: 15px;
+            border-radius: 10px;
+            border: 1px solid rgba(255, 193, 7, 0.3);
+            font-size: 0.95rem;
+        }
+
+        /* Responsive design */
+        @media (max-width: 600px) {
+            .user-greeting {
+                position: static;
+                display: inline-block;
+                margin-bottom: 10px;
+            }
+            
+            .header {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="consent-container">
+        <div class="header">
+            <h1>Privacy Policy</h1>
+            <p>Please read our privacy policy completely before proceeding</p>
+            
+            {% if username %}
+                <div class="personalized-message">
+                    <p>Hi {{ username }}, we value your privacy and want to ensure you understand how we handle your data.</p>
+                </div>
+            {% else %}
+                <div class="guest-notice">
+                    <p>👤 Browsing as guest - Consider creating an account for a personalized experience</p>
+                </div>
+            {% endif %}
+        </div>
+        
+        <div class="content-wrapper">
+            <div class="scroll-indicator" id="scrollIndicator"></div>
+            <div class="privacy-content" id="privacyContent">
+                <h2>1. Information We Collect</h2>
+                <p>We collect information you provide directly to us, such as when you create an account or contact us for support. This may include your name, email address.</p>
+                
+                <h2>2. How We Use Your Information</h2>
+                <p>We use the information we collect to:</p>
+                <ul>
+                    <li>Provide, maintain, and improve our services</li>
+                    <li>Process transactions and send related information</li> 
+                    <li>Monitor and analyze trends and usage</li>
+                </ul>
+                
+                <h2>3. Information Sharing</h2>
+                <p>We do not sell, trade, or otherwise transfer your personal information to third parties without your consent, except as described in this privacy policy. We may share your information with trusted third parties who assist us in operating our website.</p>
+                
+                <h2>4. Data Security</h2>
+                <p>We implement appropriate technical and organizational measures to protect your personal information against unauthorized access, alteration, disclosure, or destruction. However, no method of transmission over the internet is 100% secure.</p>
+                
+                <h2>5. Cookies and Tracking</h2>
+                <p>We use cookies and similar tracking technologies to enhance your experience on our website. Cookies help us understand how you use our site and remember your preferences.</p>
+                
+                <h2>6. Your Rights</h2>
+                <p>You have the right to access, update, or delete your personal information. You may also opt out of our services if you deemed our services are no longer appliable to your usage. All data that can be used to identity you would be deleted once you started the request.</p>
+                
+                <h2>7. Children's Privacy</h2>
+                <p>Our services are not intended for children under 13. We do not knowingly collect personal information from children under 13. If we learn that we have collected personal information from a child under 13, we will delete that information promptly.</p>
+                
+                <h2>8. Changes to This Policy</h2>
+                <p>We may update this privacy policy from time to time. We will notify you of any changes by posting the new policy on this page and updating the "Last Updated" date.</p>
+                
+                <h2>9. Contact Information</h2>
+                <p>If you have any questions about this privacy policy, please contact us at privacy@example.com or write to us at: Privacy Team, 123 Main Street, City, State 12345.</p>
+                
+                <p><strong>Last Updated:</strong> July 23, 2025</p>
+            </div>
+            
+            <div class="scroll-prompt" id="scrollPrompt">
+                👇 Please scroll down to continue
+            </div>
+        </div>
+        
+        <div class="footer">
+            <button class="accept-button" id="acceptButton">
+                I Accept the Privacy Policy
+            </button>
+            <div class="status-message status-incomplete" id="statusMessage">
+                Please read the entire privacy policy to continue
+            </div>
+            <div class="progress-text" id="progressText">
+                Reading Progress: 0%
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const privacyContent = document.getElementById('privacyContent');
+        const scrollIndicator = document.getElementById('scrollIndicator');
+        const acceptButton = document.getElementById('acceptButton');
+        const statusMessage = document.getElementById('statusMessage');
+        const progressText = document.getElementById('progressText');
+        const scrollPrompt = document.getElementById('scrollPrompt');
+        
+        let hasScrolledToBottom = false;
+        
+        privacyContent.addEventListener('scroll', function() {
+            const scrollTop = privacyContent.scrollTop;
+            const scrollHeight = privacyContent.scrollHeight;
+            const clientHeight = privacyContent.clientHeight;
+            
+            // Calculate scroll percentage
+            const scrollPercentage = (scrollTop / (scrollHeight - clientHeight)) * 100;
+            const clampedPercentage = Math.min(100, Math.max(0, scrollPercentage));
+            
+            // Update progress indicator
+            scrollIndicator.style.width = clampedPercentage + '%';
+            progressText.textContent = `Reading Progress: ${Math.round(clampedPercentage)}%`;
+            
+            // Check if user has scrolled to bottom (with small tolerance)
+            if (scrollTop + clientHeight >= scrollHeight - 5) {
+                hasScrolledToBottom = true;
+                enableAcceptButton();
+            }
+            
+            // Hide scroll prompt when scrolling starts
+            if (scrollTop > 50) {
+                scrollPrompt.style.opacity = '0';
+            } else {
+                scrollPrompt.style.opacity = '1';
+            }
+        });
+        
+        function enableAcceptButton() {
+            acceptButton.classList.add('enabled');
+            statusMessage.textContent = 'Thank you for reading! You may now accept the privacy policy.';
+            statusMessage.className = 'status-message status-complete';
+            scrollPrompt.style.display = 'none';
+        }
+        
+        acceptButton.addEventListener('click', function() {
+            if (hasScrolledToBottom) {
+                    alert('Privacy policy accepted! You will now be redirected to the main application.');
+                // Here you would typically redirect to your main application
+                window.location.href = '/dashboard';
+            }
+        });
+        
+        // Add some visual feedback for scroll progress
+        privacyContent.addEventListener('scroll', function() {
+            const scrollTop = privacyContent.scrollTop;
+            if (scrollTop > 0) {
+                document.querySelector('.content-wrapper').style.boxShadow = 'inset 0 10px 20px rgba(0,0,0,0.1)';
+            } else {
+                document.querySelector('.content-wrapper').style.boxShadow = 'none';
+            }
+        });
+    </script>
+</body>
+</html>

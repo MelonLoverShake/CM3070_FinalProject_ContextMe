@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -125,6 +126,7 @@
             transition: var(--transition);
             border: 1px solid var(--border-color);
             overflow: hidden;
+            margin-bottom: 2rem;
         }
 
         .card:hover {
@@ -437,6 +439,141 @@
             background: linear-gradient(90deg, transparent, var(--border-color), transparent);
             margin: 3rem 0;
         }
+
+        .security-info {
+            background: linear-gradient(135deg, #f3f4f6, #e5e7eb);
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 1.5rem;
+            border-left: 4px solid #6366f1;
+        }
+
+        .security-info h4 {
+            color: var(--text-primary);
+            margin-bottom: 0.5rem;
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+
+        .security-info p {
+            color: var(--text-secondary);
+            font-size: 0.8rem;
+        }
+
+        .user-id-display {
+            font-family: 'Courier New', monospace;
+            background: #f1f5f9;
+            padding: 0.5rem;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            color: #475569;
+        }
+
+        .date-display {
+            font-weight: 500;
+            color: var(--text-primary);
+        }
+
+        .buttons-container {
+            display: flex;
+            align-items: center;
+        }
+
+        /* Download Button Styles */
+        .download-button {
+            background: linear-gradient(135deg, #f59e0b, #d97706);
+            border: none;
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: var(--transition);
+            font-size: 0.875rem;
+            font-weight: 600;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-top: 1rem;
+        }
+
+        .download-button:hover {
+            background: linear-gradient(135deg, #d97706, #b45309);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(245, 158, 11, 0.3);
+        }
+
+        .download-button:active {
+            transform: translateY(0);
+        }
+
+        .download-icon {
+            width: 16px;
+            height: 16px;
+        }
+
+        /* Consent Reminder Styles */
+.consent-reminder {
+    background: linear-gradient(135deg, #fef3c7, #fde047);
+    border: 2px solid #f59e0b;
+    border-radius: var(--radius);
+    padding: 1.5rem;
+    margin-bottom: 2rem;
+    position: relative;
+    overflow: hidden;
+}
+
+.consent-reminder::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 6px;
+    height: 100%;
+    background: linear-gradient(135deg, #f59e0b, #d97706);
+}
+
+.consent-reminder-header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+.consent-reminder-icon {
+    font-size: 2rem;
+    margin-right: 1rem;
+}
+
+.consent-reminder-title {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: #92400e;
+}
+
+.consent-reminder-text {
+    color: #78350f;
+    margin-bottom: 1rem;
+    line-height: 1.6;
+}
+
+.consent-cta-button {
+    background: linear-gradient(135deg, #f59e0b, #d97706);
+    color: white;
+    padding: 0.75rem 1.5rem;
+    border-radius: 8px;
+    text-decoration: none;
+    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    transition: var(--transition);
+}
+
+.consent-cta-button:hover {
+    background: linear-gradient(135deg, #d97706, #b45309);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(245, 158, 11, 0.3);
+}
     </style>
 </head>
 <body>
@@ -448,8 +585,8 @@
             </div>
             <nav>
                 <!-- Username Display -->
-                <span class="username-display">Hey, {{ username }} 👋</span>
-                <a href="#" class="nav-item">Home</a>
+                <span class="username-display">Hey, {{ user.username }} 👋</span>
+                <a href="{% url 'dashboard' %}" class="nav-item">Home</a>
                 <a href="{% url 'profile' %}" class="nav-item">Profile</a>
                 <a href="{% url 'logout' %}" class="nav-item logout">Logout</a>
             </nav>
@@ -463,6 +600,30 @@
             <h1 class="profile-title">Profile</h1>
         </div>
 
+        <!-- Consent Reminder (shown when user hasn't completed consent) -->
+{% if not user_has_consent %}
+<div class="consent-reminder">
+    <div class="consent-reminder-header">
+        <div class="consent-reminder-icon">⚠️</div>
+        <h3 class="consent-reminder-title">Complete Your Consent Process</h3>
+    </div>
+    <p class="consent-reminder-text">
+        We notice you haven't completed the consent process yet. To fully access all features and ensure your data preferences are properly recorded, please take a moment to review and complete the consent form.
+    </p>
+    <p class="consent-reminder-text">
+        <strong>Why this matters:</strong> Your consent preferences help us provide better service while respecting your privacy choices.
+    </p>
+    <a href="/consent/consent" class="consent-cta-button">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M9 12l2 2 4-4"></path>
+            <path d="M21 12c-1 0-3-1-3-3s2-3 3-3 3 1 3 3-2 3-3 3"></path>
+            <path d="M3 12c1 0 3-1 3-3s-2-3-3-3-3 1-3 3 2 3 3 3"></path>
+        </svg>
+        Complete Consent Form
+    </a>
+</div>
+{% endif %}
+
         <!-- Basic Information Card -->
         <div class="card">
             <div class="card-header">
@@ -472,7 +633,7 @@
                 <div class="field">
                     <label class="field-label">Username</label>
                     <div class="field-value">
-                        <span class="field-text">{{ user_profile.username|default:'Not set' }}</span>
+                        <span class="field-text">{{ user.username|default:'Not set' }}</span>
                         <button class="edit-button" onclick="editField('username')">
                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                 <path d="M17 3a2.85 2.85 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"></path>
@@ -483,7 +644,7 @@
                 <div class="field">
                     <label class="field-label">Email</label>
                     <div class="field-value">
-                        <span class="field-text">{{ user_profile.email|default:'Not set' }}</span>
+                        <span class="field-text">{{ user.email|default:'Not set' }}</span>
                         <button class="edit-button" onclick="editField('email')">
                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                 <path d="M17 3a2.85 2.85 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"></path>
@@ -494,7 +655,7 @@
                 <div class="field">
                     <label class="field-label">First Name</label>
                     <div class="field-value">
-                        <span class="field-text">{{ user_profile.first_name|default:'Not set' }}</span>
+                        <span class="field-text">{{ user.first_name|default:'Not set' }}</span>
                         <button class="edit-button" onclick="editField('first_name')">
                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                 <path d="M17 3a2.85 2.85 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"></path>
@@ -505,7 +666,7 @@
                 <div class="field">
                     <label class="field-label">Last Name</label>
                     <div class="field-value">
-                        <span class="field-text">{{ user_profile.last_name|default:'Not set' }}</span>
+                        <span class="field-text">{{ user.last_name|default:'Not set' }}</span>
                         <button class="edit-button" onclick="editField('last_name')">
                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                 <path d="M17 3a2.85 2.85 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"></path>
@@ -513,16 +674,22 @@
                         </button>
                     </div>
                 </div>
-                <div class="field">
+                <div class="field readonly-field">
                     <label class="field-label">User ID</label>
                     <div class="field-value">
-                        <span class="field-text">{{ user_profile.id }}</span>
+                        <span class="field-text user-id-display">{{ user.id }}</span>
                     </div>
                 </div>
-                <div class="field">
-                    <label class="field-label">Last Login</label>
+                <div class="field readonly-field">
+                    <label class="field-label">Account Created</label>
                     <div class="field-value">
-                        <span class="field-text">{{ user_profile.last_login|date:"F j, Y g:i A"|default:"Never" }}</span>
+                        <span class="field-text date-display">{{ user.created_at|date:"F j, Y g:i A" }}</span>
+                    </div>
+                </div>
+                <div class="field readonly-field">
+                    <label class="field-label">Last Updated</label>
+                    <div class="field-value">
+                        <span class="field-text date-display">{{ user.updated_at|date:"F j, Y g:i A" }}</span>
                     </div>
                 </div>
             </div>
@@ -537,8 +704,8 @@
                 <div class="field">
                     <label class="field-label">Pronouns</label>
                     <div class="field-value">
-                        <span class="field-text">{{ user_profile.pronouns|default:'Not specified' }}</span>
-                        <div style="display: flex; align-items: center;">
+                        <span class="field-text">{{ user.pronouns|default:'Not specified' }}</span>
+                        <div class="buttons-container">
                             {% if predicted_pronouns %}
                                 <span class="prediction-badge">AI: {{ predicted_pronouns }}</span>
                             {% endif %}
@@ -559,7 +726,7 @@
                 <div class="field">
                     <label class="field-label">Gender Identity</label>
                     <div class="field-value">
-                        <span class="field-text">{{ user_profile.gender_identity|default:'Not specified' }}</span>
+                        <span class="field-text">{{ user.gender_identity|default:'Not specified' }}</span>
                         <button class="edit-button" onclick="editField('gender_identity')">
                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                 <path d="M17 3a2.85 2.85 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"></path>
@@ -573,79 +740,91 @@
         <!-- Account Security Card -->
         <div class="card">
             <div class="card-header">
-                <h3>Account Security</h3>
+                <h3>Account Security & Data</h3>
             </div>
             <div class="card-body">
-                <div class="field readonly-field">
-                    <label class="field-label">Staff Status</label>
-                    <div class="field-value">
-                        <span class="field-text">
-                            {% if user_profile.is_staff %}
-                                <span style="color: #8b5cf6; font-weight: 600;">✓ Staff Member</span>
-                            {% else %}
-                                <span style="color: #6b7280;">Regular User</span>
-                            {% endif %}
-                        </span>
-                    </div>
+                <div class="security-info">
+                    <h4>🔐 Custom User Model</h4>
+                    <p>This account uses a custom user authentication system with enhanced security features.</p>
                 </div>
-                <div class="field readonly-field">
-                    <label class="field-label">Superuser Status</label>
-                    <div class="field-value">
-                        <span class="field-text">
-                            {% if user_profile.is_superuser %}
-                                <span style="color: #dc2626; font-weight: 600;">✓ Administrator</span>
-                            {% else %}
-                                <span style="color: #6b7280;">Standard Access</span>
-                            {% endif %}
-                        </span>
-                    </div>
-                </div>
+                
                 <div class="field">
                     <label class="field-label">Change Password</label>
                     <div class="field-value">
                         <span class="field-text">••••••••••••</span>
-                        <button class="edit-button" onclick="changePassword()">
+                        <a href="http://localhost:8000/auth/change-password/" class="edit-button">
                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                 <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
                                 <circle cx="12" cy="16" r="1"></circle>
                                 <path d="M7.5 7.5C7.5 5.01 9.51 3 12 3s4.5 2.01 4.5 4.5V11"></path>
                             </svg>
-                        </button>
+                        </a>
                     </div>
                 </div>
+                
+                {% if user.last_password_change %}
+                <div class="field readonly-field">
+                    <label class="field-label">Last Password Change</label>
+                    <div class="field-value">
+                        <span class="field-text date-display">{{ user.last_password_change|date:"F j, Y g:i A" }}</span>
+                    </div>
+                </div>
+                {% endif %}
+
+                <!-- Download Data Section -->
+                <div class="security-info" style="border-left-color: #f59e0b; background: linear-gradient(135deg, #fef3c7, #fde68a);">
+                    <h4>📁 Data Export</h4>
+                    <p>Download a complete copy of all your account information and data in two formats (PDF or Text).</p>
+                </div>
+                
+                <a href="http://localhost:8000/auth/download/" class="download-button">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="download-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                        <polyline points="7,10 12,15 17,10"></polyline>
+                        <line x1="12" y1="15" x2="12" y2="3"></line>
+                    </svg>
+                    Download My Data
+                </a>
             </div>
         </div>
 
-        <!-- Login Information Card -->
+        <!-- Browser & Session Information Card -->
         <div class="card">
             <div class="card-header">
                 <h3>Session Information</h3>
             </div>
             <div class="card-body">
+                {% if user.last_login_browser %}
                 <div class="field readonly-field">
-                    <label class="field-label">Current Session User</label>
+                    <label class="field-label">Last Login Browser</label>
+                    <div class="field-value">
+                        <span class="field-text" style="font-size: 0.8rem;">{{ user.last_login_browser|slice:":100" }}...</span>
+                    </div>
+                </div>
+                {% endif %}
+                
+                <div class="field readonly-field">
+                    <label class="field-label">Current Session</label>
                     <div class="field-value">
                         <span class="field-text">
-                            {% if request.session.user_id %}
-                                Session ID: {{ request.session.user_id|slice:":8" }}...
+                            {% if request.session.session_key %}
+                                Session: {{ request.session.session_key|slice:":12" }}...
                             {% else %}
-                                Authenticated User Session
+                                Active Session
                             {% endif %}
                         </span>
                     </div>
                 </div>
+                
+                {% if request.META.HTTP_USER_AGENT %}
                 <div class="field readonly-field">
-                    <label class="field-label">Session Key</label>
-                    <div class="field-value">
-                        <span class="field-text">{{ request.session.session_key|slice:":12" }}...</span>
-                    </div>
-                </div>
-                <div class="field readonly-field">
-                    <label class="field-label">User Agent</label>
+                    <label class="field-label">Current User Agent</label>
                     <div class="field-value">
                         <span class="field-text" style="font-size: 0.8rem;">{{ request.META.HTTP_USER_AGENT|slice:":100" }}...</span>
                     </div>
                 </div>
+                {% endif %}
+                
                 <div class="field readonly-field">
                     <label class="field-label">IP Address</label>
                     <div class="field-value">
@@ -678,8 +857,8 @@
         }
 
         function suggestPronouns() {
-            const firstName = '{{ user_profile.first_name|escapejs }}';
-            const username = '{{ user_profile.username|escapejs }}';
+            const firstName = '{{ user.first_name|escapejs }}';
+            const username = '{{ user.username|escapejs }}';
             
             fetch('/api/suggest-pronouns/', {
                 method: 'POST',
@@ -690,15 +869,15 @@
                 body: JSON.stringify({
                     'first_name': firstName,
                     'username': username,
-                    'user_id': '{{ user_profile.id }}'
+                    'user_id': '{{ user.id }}'
                 })
             })
             .then(response => response.json())
             .then(data => {
                 if (data.suggested_pronouns) {
                     // Update or create the prediction badge
-                    const pronounsContainer = document.querySelector('.field-label:contains("Pronouns")').parentNode;
-                    let badge = pronounsContainer.querySelector('.prediction-badge');
+                    const buttonsContainer = document.querySelector('.field-label:contains("Pronouns")').parentNode.querySelector('.buttons-container');
+                    let badge = buttonsContainer.querySelector('.prediction-badge');
                     
                     if (badge) {
                         badge.textContent = `AI: ${data.suggested_pronouns}`;
@@ -706,7 +885,6 @@
                         badge = document.createElement('span');
                         badge.className = 'prediction-badge';
                         badge.textContent = `AI: ${data.suggested_pronouns}`;
-                        const buttonsContainer = pronounsContainer.querySelector('div[style*="display: flex"]');
                         buttonsContainer.insertBefore(badge, buttonsContainer.firstChild);
                     }
                 }
@@ -720,60 +898,8 @@
         function editField(fieldName) {
             // This would open a modal or inline editor
             const currentValue = event.target.closest('.field-value').querySelector('.field-text').textContent.trim();
-            const newValue = prompt(`Edit ${fieldName}:`, currentValue);
-            
-            if (newValue !== null && newValue !== currentValue) {
-                // Send update to server
-                fetch('/api/update-profile/', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-CSRFToken': getCookie('csrftoken')
-                    },
-                    body: JSON.stringify({
-                        'field': fieldName,
-                        'value': newValue,
-                        'user_id': '{{ user_profile.id }}'
-                    })
-                })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                        // Update the field display
-                        event.target.closest('.field-value').querySelector('.field-text').textContent = newValue;
-                    } else {
-                        alert('Error updating field: ' + (data.error || 'Unknown error'));
-                    }
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                    alert('Could not update field. Please try again later.');
-                });
-            }
-        }
-
-        function changePassword() {
-            // Redirect to password change page or open modal
-            window.location.href = '/accounts/password/change/';
-        }
-
-        // Helper function for contains selector (since we can't use jQuery)
-        document.querySelectorAll = function(selector) {
-            if (selector.includes(':contains(')) {
-                const text = selector.match(/:contains\("([^"]+)"\)/)[1];
-                return Array.from(document.getElementsByTagName('*')).filter(el => 
-                    el.textContent.includes(text)
-                );
-            }
-            return Document.prototype.querySelectorAll.call(this, selector);
-        };
-    </script>
-
-    <!-- Footer -->
-    <footer>
-        <div class="footer-container">
-            <p class="footer-text">&copy; {% now "Y" %} User Dashboard. All rights reserved.</p>
-        </div>
-    </footer>
+            const newValue = prompt(`Edit ${fieldName}:`, currentValue === 'Not set' || currentValue === 'Not specified' ? '' : currentValue);
+        }   
+</script>
 </body>
 </html>
