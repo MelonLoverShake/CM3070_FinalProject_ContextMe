@@ -11,7 +11,9 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 """
 
 from pathlib import Path
+from supabase import create_client
 import dj_database_url
+import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -32,6 +34,7 @@ ALLOWED_HOSTS = ['127.0.0.1','localhost']
 # Application definition
 
 INSTALLED_APPS = [
+    'captcha',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -40,6 +43,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'login',
     'main',
+    'consent',
     'rest_framework',
 ]
 
@@ -83,10 +87,17 @@ DATABASES = {
     'default': dj_database_url.parse(DATABASE_URL)
 }
 
+# Add SSL options manually
+DATABASES['default']['OPTIONS'] = {
+    'sslmode': 'verify-full',
+    'sslrootcert': os.path.join(BASE_DIR, 'certs', 'prod-ca-2021.crt')
+}
+
 # Supabase settings
 SUPABASE_URL = 'https://hdvncgemljlwzjnhvmbg.supabase.co'
 SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imhkdm5jZ2VtbGpsd3pqbmh2bWJnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDY5NzA0NjQsImV4cCI6MjA2MjU0NjQ2NH0.7jqn_Gn44rcRjrBew8dDd-SzNfsCmP3Vs4q7BuhpOR4'
-
+SUPABASE_SERVICE_ROLE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imhkdm5jZ2VtbGpsd3pqbmh2bWJnIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc0Njk3MDQ2NCwiZXhwIjoyMDYyNTQ2NDY0fQ.yTN9D-4cItODDU0k3s6Q_nb-CfzWD-DMKg1WPXgRna8'
+supabase = create_client(SUPABASE_URL, SUPABASE_ANON_KEY)
 
 # Password validation
 # https://docs.djangoproject.com/en/5.2/ref/settings/#auth-password-validators
@@ -128,3 +139,14 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+
+RECAPTCHA_PUBLIC_KEY = '6Lc8anorAAAAAFCOqTPQdm9er-DHrsjF0TJ_uXGv'
+RECAPTCHA_PRIVATE_KEY = '6Lc8anorAAAAANRYeOh2Ka-cbBablD_f7f9MObEg'
+
+RECAPTCHA_REQUIRED_SCORE = 0.85
+RECAPTCHA_USE_SSL = True
+
+SECURE_BROWSER_XSS_FILTER = True
+SECURE_CONTENT_TYPE_NOSNIFF = True
+
