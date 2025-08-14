@@ -477,10 +477,8 @@ def delete_account_form_view(request):
         
         # Get Supabase user ID for auth deletion
         user_id = user_data.get('id')
-        
-        # Delete from custom tables
+
         try:
-            # Delete from your custom users table
             result = supabase.table('login_user').delete().eq('email', email).execute()
             print(f"Successfully deleted user data from users table: {email}")
             
@@ -504,8 +502,7 @@ def delete_account_form_view(request):
             print(f"Successfully cleared session for user: {email}")
         except Exception as session_error:
             print(f"Error clearing session: {type(session_error).__name__}: {str(session_error)}")
-            # Continue even if session clearing fails
-        
+            
         messages.success(request, 'Your account has been successfully deleted.')
         print(f"Account deletion completed successfully for user: {email}")
         return redirect('/')

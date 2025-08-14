@@ -1,0 +1,578 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% if persona %}{{ persona.persona_name|default:"Persona Detail" }}{% else %}Persona Not Found{% endif %} - Persona Dashboard</title>
+    <style>
+        :root {
+            --primary-color: #2563eb;
+            --secondary-color: #1e40af;
+            --accent-color: #3b82f6;
+            --success-color: #10b981;
+            --danger-color: #ef4444;
+            --warning-color: #f59e0b;
+            --gray-50: #f9fafb;
+            --gray-100: #f3f4f6;
+            --gray-200: #e5e7eb;
+            --gray-300: #d1d5db;
+            --gray-400: #9ca3af;
+            --gray-500: #6b7280;
+            --gray-600: #4b5563;
+            --gray-700: #374151;
+            --gray-800: #1f2937;
+            --gray-900: #111827;
+            --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+            --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+            --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+            --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: linear-gradient(135deg, var(--gray-50) 0%, var(--gray-100) 100%);
+            color: var(--gray-900);
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 2rem 1.5rem;
+        }
+
+        .breadcrumb {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 2rem;
+            font-size: 0.875rem;
+            color: var(--gray-600);
+        }
+
+        .breadcrumb a {
+            color: var(--primary-color);
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+
+        .breadcrumb a:hover {
+            color: var(--secondary-color);
+        }
+
+        .breadcrumb-separator {
+            color: var(--gray-400);
+        }
+
+        .error {
+            background: #fef2f2;
+            border: 1px solid #fecaca;
+            color: var(--danger-color);
+            padding: 2rem;
+            border-radius: 16px;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .error-icon {
+            font-size: 3rem;
+            opacity: 0.7;
+        }
+
+        .error h2 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .persona-header {
+            background: white;
+            border-radius: 20px;
+            padding: 2.5rem;
+            margin-bottom: 2rem;
+            box-shadow: var(--shadow-lg);
+            border: 1px solid var(--gray-200);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .persona-header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 5px;
+            background: linear-gradient(90deg, var(--primary-color), var(--accent-color));
+        }
+
+        .persona-title-section {
+            display: flex;
+            align-items: flex-start;
+            gap: 2rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .persona-avatar {
+            width: 80px;
+            height: 80px;
+            border-radius: 20px;
+            background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 2rem;
+            font-weight: 700;
+            box-shadow: var(--shadow-lg);
+            flex-shrink: 0;
+        }
+
+        .persona-title-info {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .persona-name {
+            font-size: 2.25rem;
+            font-weight: 700;
+            color: var(--gray-900);
+            margin-bottom: 0.5rem;
+            line-height: 1.2;
+            word-wrap: break-word;
+        }
+
+        .persona-id {
+            color: var(--gray-500);
+            font-size: 1rem;
+            font-family: 'SF Mono', 'Monaco', 'Cascadia Code', 'Roboto Mono', monospace;
+            background: var(--gray-100);
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            display: inline-block;
+            margin-bottom: 1rem;
+        }
+
+        .persona-meta {
+            display: flex;
+            gap: 1.5rem;
+            flex-wrap: wrap;
+        }
+
+        .meta-item {
+            display: flex;
+            flex-direction: column;
+            gap: 0.25rem;
+        }
+
+        .meta-label {
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: var(--gray-500);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .meta-value {
+            font-size: 0.875rem;
+            color: var(--gray-700);
+            font-weight: 500;
+        }
+
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.375rem;
+            padding: 0.375rem 0.75rem;
+            border-radius: 9999px;
+            font-size: 0.875rem;
+            font-weight: 600;
+        }
+
+        .status-badge.active {
+            background: #ecfdf5;
+            color: var(--success-color);
+            border: 1px solid #a7f3d0;
+        }
+
+        .status-badge.inactive {
+            background: #fef2f2;
+            color: var(--danger-color);
+            border: 1px solid #fecaca;
+        }
+
+        .status-badge::before {
+            content: '';
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: currentColor;
+        }
+
+        .content-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 2rem;
+        }
+
+        .content-section {
+            background: white;
+            border-radius: 16px;
+            padding: 2rem;
+            box-shadow: var(--shadow-md);
+            border: 1px solid var(--gray-200);
+        }
+
+        .section-header {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid var(--gray-100);
+        }
+
+        .section-icon {
+            font-size: 1.25rem;
+            color: var(--primary-color);
+        }
+
+        .section-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--gray-900);
+        }
+
+        .section-content {
+            color: var(--gray-700);
+            font-size: 1rem;
+            line-height: 1.7;
+        }
+
+        .description-content {
+            background: var(--gray-50);
+            padding: 1.5rem;
+            border-radius: 12px;
+            border-left: 4px solid var(--primary-color);
+        }
+
+        .context-content {
+            background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+            padding: 1.5rem;
+            border-radius: 12px;
+            border: 1px solid #bae6fd;
+            max-height: 400px;
+            overflow-y: auto;
+            font-style: italic;
+            position: relative;
+        }
+
+        .context-content::before {
+            content: '"';
+            font-size: 3rem;
+            color: var(--primary-color);
+            position: absolute;
+            top: 0.5rem;
+            left: 1rem;
+            opacity: 0.3;
+        }
+
+        .context-content::after {
+            content: '"';
+            font-size: 3rem;
+            color: var(--primary-color);
+            position: absolute;
+            bottom: 0.5rem;
+            right: 1rem;
+            opacity: 0.3;
+        }
+
+        .empty-state {
+            text-align: center;
+            color: var(--gray-500);
+            font-style: italic;
+            padding: 2rem;
+            background: var(--gray-50);
+            border-radius: 12px;
+            border: 2px dashed var(--gray-300);
+        }
+
+        .actions-bar {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            margin-top: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.75rem 1.5rem;
+            border-radius: 10px;
+            font-size: 0.875rem;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.2s;
+            border: none;
+            cursor: pointer;
+        }
+
+        .btn-primary {
+            background: var(--primary-color);
+            color: white;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .btn-primary:hover {
+            background: var(--secondary-color);
+            transform: translateY(-1px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .btn-secondary {
+            background: white;
+            color: var(--gray-700);
+            border: 1px solid var(--gray-300);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .btn-secondary:hover {
+            background: var(--gray-50);
+            border-color: var(--gray-400);
+            transform: translateY(-1px);
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 1rem;
+            }
+
+            .persona-header {
+                padding: 1.5rem;
+            }
+
+            .persona-title-section {
+                flex-direction: column;
+                gap: 1rem;
+                text-align: center;
+            }
+
+            .persona-avatar {
+                width: 60px;
+                height: 60px;
+                font-size: 1.5rem;
+                align-self: center;
+            }
+
+            .persona-name {
+                font-size: 1.75rem;
+            }
+
+            .persona-meta {
+                justify-content: center;
+                gap: 1rem;
+            }
+
+            .content-section {
+                padding: 1.5rem;
+            }
+
+            .actions-bar {
+                flex-direction: column;
+            }
+
+            .btn {
+                justify-content: center;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .breadcrumb {
+                flex-wrap: wrap;
+            }
+
+            .persona-name {
+                font-size: 1.5rem;
+            }
+
+            .context-content {
+                max-height: 300px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="breadcrumb">
+            <a href="{% url 'persona-list' %}">Personas</a>
+            <span class="breadcrumb-separator">/</span>
+            <span>{% if persona %}{{ persona.persona_name|default:"Persona Detail" }}{% else %}Not Found{% endif %}</span>
+        </div>
+
+        {% if error_message %}
+        <div class="error">
+            <div class="error-icon">⚠️</div>
+            <h2>Error Loading Persona</h2>
+            <p>{{ error_message }}</p>
+            <div class="actions-bar">
+                <a href="{% url 'persona-list' %}" class="btn btn-primary">
+                    ← Back to Personas
+                </a>
+            </div>
+        </div>
+        {% elif persona %}
+        <div class="persona-header">
+            <div class="persona-title-section">
+                <div class="persona-avatar">
+                    {% if persona.persona_name %}
+                        {{ persona.persona_name|first|upper }}{% if persona.persona_name|wordcount > 1 %}{{ persona.persona_name|cut:' '|slice:"1:2"|upper }}{% endif %}
+                    {% else %}
+                        ?
+                    {% endif %}
+                </div>
+                <div class="persona-title-info">
+                    <h1 class="persona-name">{{ persona.persona_name|default:"Unnamed Persona" }}</h1>
+                    <div class="persona-id">ID: {{ persona.id }}</div>
+                    
+                    <div class="persona-meta">
+                        {% if persona.is_active is not None %}
+                        <div class="meta-item">
+                            <div class="meta-label">Status</div>
+                            <div class="meta-value">
+                                <span class="status-badge {% if persona.is_active %}active{% else %}inactive{% endif %}">
+                                    {% if persona.is_active %}Active{% else %}Inactive{% endif %}
+                                </span>
+                            </div>
+                        </div>
+                        {% endif %}
+                        
+                        {% if persona.created_at %}
+                        <div class="meta-item">
+                            <div class="meta-label">Created</div>
+                            <div class="meta-value">{{ persona.created_at|date:"M j, Y" }}</div>
+                        </div>
+                        {% endif %}
+                        
+                        {% if persona.updated_at %}
+                        <div class="meta-item">
+                            <div class="meta-label">Last Updated</div>
+                            <div class="meta-value">{{ persona.updated_at|date:"M j, Y" }}</div>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="content-grid">
+            <div class="content-section">
+                <div class="section-header">
+                    <span class="section-icon">📝</span>
+                    <h2 class="section-title">Bio</h2>
+                </div>
+                <div class="section-content">
+                    {% if persona.bio %}
+                        <div class="description-content">
+                            {{ persona.bio|linebreaks }}
+                        </div>
+                    {% else %}
+                        <div class="empty-state">
+                            No description provided for this persona.
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+            <div class="content-section">
+                <div class="section-header">
+                    <span class="section-icon">🧠</span>
+                    <h2 class="section-title">Context</h2>
+                </div>
+                <div class="section-content">
+                    {% if persona.context %}
+                        <div class="context-content">
+                            {{ persona.context|linebreaks }}
+                        </div>
+                    {% else %}
+                        <div class="empty-state">
+                            No context information provided for this persona.
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <div class="actions-bar">
+            <a href="{% url 'persona-list' %}" class="btn btn-secondary">
+                ← Back to Personas
+            </a>
+            <!-- Add edit/delete buttons here if needed -->
+            <!--
+            <a href="#" class="btn btn-primary">
+                ✏️ Edit Persona
+            </a>
+            <button class="btn btn-danger" onclick="deletePersona()">
+                🗑️ Delete Persona
+            </button>
+            -->
+        </div>
+        {% else %}
+        <div class="error">
+            <div class="error-icon">🤖</div>
+            <h2>Persona Not Found</h2>
+            <p>The requested persona could not be found.</p>
+            <div class="actions-bar">
+                <a href="{% url 'persona-list' %}" class="btn btn-primary">
+                    ← Back to Personas
+                </a>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+
+    <script>
+        // Add any interactive features here
+        function deletePersona() {
+            if (confirm('Are you sure you want to delete this persona? This action cannot be undone.')) {
+                // Implement delete functionality
+                alert('Delete functionality would be implemented here');
+            }
+        }
+
+        // Add copy ID functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            const personaId = document.querySelector('.persona-id');
+            if (personaId) {
+                personaId.style.cursor = 'pointer';
+                personaId.title = 'Click to copy ID';
+                
+                personaId.addEventListener('click', function() {
+                    const id = this.textContent.replace('ID: ', '');
+                    navigator.clipboard.writeText(id).then(function() {
+                        // Show temporary success message
+                        const originalText = personaId.textContent;
+                        personaId.textContent = 'Copied!';
+                        personaId.style.color = 'var(--success-color)';
+                        
+                        setTimeout(function() {
+                            personaId.textContent = originalText;
+                            personaId.style.color = '';
+                        }, 2000);
+                    });
+                });
+            }
+        });
+    </script>
+</body>
+</html>
