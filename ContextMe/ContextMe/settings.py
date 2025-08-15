@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     'login',
     'main',
     'consent',
+    'log',
     'rest_framework',
 ]
 

@@ -27,5 +27,6 @@ urlpatterns = [
     path('auth', include('login.urls')),
     path('main/', include('main.urls')),
     path('consent/',include('consent.urls')),
+    path('logs/', include('log.urls')),
     path('', RedirectView.as_view(url='/auth/login/', permanent=False), name='home'),
 ]
