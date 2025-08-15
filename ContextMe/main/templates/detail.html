@@ -517,19 +517,18 @@
             <a href="{% url 'persona-list' %}" class="btn btn-secondary">
                 ← Back to Personas
             </a>
-            <!-- Add edit/delete buttons here if needed -->
-            <!--
-            <a href="#" class="btn btn-primary">
+            <a href="{% url 'persona-edit' persona.id %}" class="btn btn-primary">
                 ✏️ Edit Persona
             </a>
             <button class="btn btn-danger" onclick="deletePersona()">
-                🗑️ Delete Persona
+                -> Delete Persona
             </button>
-            -->
         </div>
         {% else %}
-        <div class="error">
-            <div class="error-icon">🤖</div>
+       <div class="error">
+            <div class="error-icon">
+                <img src="https://postimg.cc/30CPL2Js" alt="Persona Not Found Icon">
+            </div>
             <h2>Persona Not Found</h2>
             <p>The requested persona could not be found.</p>
             <div class="actions-bar">
@@ -540,7 +539,6 @@
         </div>
         {% endif %}
     </div>
-
     <script>
         // Add any interactive features here
         function deletePersona() {

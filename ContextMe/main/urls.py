@@ -9,5 +9,6 @@ urlpatterns = [
     path('personas/list', views.PersonaList, name='persona-list'),
     path('personas/detail/<uuid:id>/', views.PersonaDetail, name='persona-detail_web'),
     path('personas/<uuid:id>/delete/', views.PersonaDelete, name='persona_delete'),
+    path('edit/<uuid:id>/', views.PersonaEdit, name='persona-edit'),
 
 ]

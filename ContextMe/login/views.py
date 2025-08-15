@@ -21,6 +21,7 @@ from supabase import create_client, Client
 # Local App Imports
 from .forms import *
 from .models import User
+from main.models import persona
 from .utils import get_client_ip, get_user_agent_info
 from .permission import BlocklistPermission
 from .services.supabase_auth import SupabaseAuth
@@ -161,7 +162,7 @@ def register_view(request):
     return render(request, 'register.html', {'form': form})
 
 
-@ratelimit(key="ip", rate='10/m',block=True)
+@ratelimit(key="ip", rate='10/m', block=True)
 def dashboard_view(request):
     supabase_user = request.session.get('supabase_user')
     supabase_token = request.session.get('supabase_token')
@@ -171,8 +172,9 @@ def dashboard_view(request):
         return redirect('login')
 
     user_email = supabase_user.get('email')
-    supabase_auth_id = supabase_user.get('id')  
+    supabase_auth_id = supabase_user.get('id')
 
+    # Fetch user data from Supabase
     url = f"{settings.SUPABASE_URL}/rest/v1/login_user?email=eq.{user_email}"
     headers = {
         "apikey": settings.SUPABASE_ANON_KEY,
@@ -184,18 +186,74 @@ def dashboard_view(request):
     response = requests.get(url, headers=headers)
 
     username = None
-    user_id = None  # This will be the actual user ID from your login_user table
+    user_id = None
+    personas = []
     
     if response.status_code == 200:
         data = response.json()
         if data:
             username = data[0].get('username')
-            user_id = data[0].get('id')  # Get the actual user ID from login_user table
+            user_id = data[0].get('id')
+
+    # Fetch personas for this user
+    try:
+        # Get the session data for personas (similar to PersonaList logic)
+        supabase_user_raw = request.session.get('supabase_user')
+        
+        if supabase_user_raw:
+            # Parse JSON string to dictionary if it's a string
+            if isinstance(supabase_user_raw, str):
+                try:
+                    supabase_user_data = json.loads(supabase_user_raw)
+                except json.JSONDecodeError as e:
+                    print(f"Failed to parse JSON from session: {e}")
+                    supabase_user_data = supabase_user_raw
+            elif isinstance(supabase_user_raw, dict):
+                supabase_user_data = supabase_user_raw
+            else:
+                supabase_user_data = supabase_user_raw
+
+            # Extract email for persona lookup
+            email = supabase_user_data.get('email') if isinstance(supabase_user_data, dict) else user_email
+            
+            if email:
+                # Find the user for personas
+                user = None
+                try:
+                    # Try your custom User model first
+                    from login.models import User
+                    user = get_object_or_404(User, email=email)
+                    print(f"Found user in login.models.User: {user}")
+                except Exception as e:
+                    print(f"Error with login.models.User: {e}")
+                    try:
+                        # Fallback to Django's built-in User model
+                        from django.contrib.auth.models import User as DjangoUser
+                        user = get_object_or_404(DjangoUser, email=email)
+                        print(f"Found user in Django User: {user}")
+                    except Exception as e2:
+                        print(f"Error with Django User: {e2}")
+                        user = None
+
+                # Fetch personas if user found
+                if user:
+                    try:
+                        personas = persona.objects.filter(user=user).order_by('-created_at')
+                        print(f"Found {personas.count()} personas for user {user}")
+                    except Exception as e:
+                        print(f"Error fetching personas: {e}")
+                        personas = []
+                        
+    except Exception as e:
+        print(f"Error fetching personas in dashboard: {e}")
+        personas = []
 
     return render(request, 'dashboard.html', {
         'username': username or user_email,
-        'user_id': user_id,  # Use this instead of supabase_user_id
-        'supabase_auth_id': supabase_auth_id,  # Keep this if you need the auth ID
+        'user_id': user_id,
+        'supabase_auth_id': supabase_auth_id,
+        'personas': personas,
+        'personas_count': len(personas) if personas else 0,
     })
 
 @ratelimit(key="ip", rate='10/m',block=True)

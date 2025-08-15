@@ -14,6 +14,7 @@ from pathlib import Path
 from supabase import create_client
 import dj_database_url
 import os
+import sentry_sdk
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -150,3 +151,10 @@ RECAPTCHA_USE_SSL = True
 SECURE_BROWSER_XSS_FILTER = True
 SECURE_CONTENT_TYPE_NOSNIFF = True
 
+
+
+sentry_sdk.init(
+    dsn="https://955a6ba4122c473c6a8a01a7aee23aeb@o4509757855170560.ingest.de.sentry.io/4509757856809040",
+    send_default_pii=True,
+    traces_sample_rate=1.0,
+)

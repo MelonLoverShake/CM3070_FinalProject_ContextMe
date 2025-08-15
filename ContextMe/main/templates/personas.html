@@ -749,7 +749,6 @@
             })
             .then(response => {
                 if (response.redirected) {
-                    // Django redirected us, follow the redirect
                     window.location.href = response.url;
                 } else if (response.ok) {
                     // Success, reload the page

@@ -1,0 +1,546 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ page_title|default:"Edit Persona" }}</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome for icons -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #f8f9fa;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        }
+        
+        .step-indicator {
+            display: flex;
+            align-items: center;
+            margin-bottom: 2rem;
+            padding: 0 1rem;
+        }
+        
+        .step {
+            display: flex;
+            align-items: center;
+            color: #6c757d;
+            font-weight: 500;
+        }
+        
+        .step.active {
+            color: #0d6efd;
+        }
+        
+        .step-number {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background-color: #6c757d;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            font-weight: 600;
+            margin-right: 8px;
+        }
+        
+        .step.active .step-number {
+            background-color: #0d6efd;
+        }
+        
+        .step-line {
+            height: 2px;
+            background-color: #dee2e6;
+            flex: 1;
+            margin: 0 1rem;
+        }
+        
+        .main-container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            overflow: hidden;
+        }
+        
+        .form-container {
+            padding: 2rem;
+        }
+        
+        .section-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #212529;
+            margin-bottom: 1.5rem;
+        }
+        
+        .avatar-section {
+            display: flex;
+            align-items: center;
+            margin-bottom: 2rem;
+            padding: 1.5rem;
+            background-color: #f8f9fa;
+            border-radius: 8px;
+        }
+        
+        .avatar-container {
+            position: relative;
+            margin-right: 1rem;
+        }
+        
+        .avatar-image {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            object-fit: cover;
+            background-color: #e9ecef;
+            border: 3px solid #fff;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        
+        .avatar-placeholder {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background-color: #e9ecef;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #6c757d;
+            font-size: 2rem;
+            border: 3px solid #fff;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        
+        .avatar-actions {
+            position: absolute;
+            bottom: -5px;
+            right: -5px;
+        }
+        
+        .avatar-btn {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            border: 2px solid white;
+            background-color: #0d6efd;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            cursor: pointer;
+            margin-bottom: 4px;
+        }
+        
+        .avatar-btn.delete {
+            background-color: #dc3545;
+        }
+        
+        .avatar-info h5 {
+            margin: 0 0 4px 0;
+            font-weight: 600;
+            color: #212529;
+        }
+        
+        .avatar-info p {
+            margin: 0;
+            color: #6c757d;
+            font-size: 0.875rem;
+        }
+        
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+        
+        .form-group.row {
+            display: flex;
+            gap: 1rem;
+        }
+        
+        .form-group.row > div {
+            flex: 1;
+        }
+        
+        .form-label {
+            font-weight: 600;
+            color: #374151;
+            margin-bottom: 0.5rem;
+            display: block;
+        }
+        
+        .form-label .required {
+            color: #dc3545;
+            margin-left: 2px;
+        }
+        
+        .form-control, .form-select {
+            border: 1px solid #d1d5db;
+            border-radius: 8px;
+            padding: 0.75rem;
+            font-size: 0.875rem;
+            transition: all 0.15s ease;
+            background-color: #fff;
+        }
+        
+        .form-control:focus, .form-select:focus {
+            border-color: #0d6efd;
+            box-shadow: 0 0 0 3px rgba(13, 110, 253, 0.1);
+            outline: none;
+        }
+        
+        textarea.form-control {
+            resize: vertical;
+            min-height: 120px;
+        }
+        
+        .form-text {
+            font-size: 0.8rem;
+            color: #6c757d;
+            margin-top: 0.25rem;
+        }
+        
+        .error-text {
+            color: #dc3545;
+            font-size: 0.8rem;
+            margin-top: 0.25rem;
+        }
+        
+        .form-check {
+            padding-left: 0;
+            margin-top: 1rem;
+        }
+        
+        .form-check-input {
+            margin-right: 0.5rem;
+        }
+        
+        .form-check-label {
+            font-weight: 500;
+            color: #374151;
+        }
+        
+        .btn-group-actions {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-top: 2rem;
+            border-top: 1px solid #e5e7eb;
+            margin-top: 2rem;
+        }
+        
+        .btn {
+            border-radius: 8px;
+            font-weight: 500;
+            padding: 0.75rem 1.5rem;
+            border: none;
+            transition: all 0.15s ease;
+        }
+        
+        .btn-primary {
+            background-color: #0d6efd;
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background-color: #0b5ed7;
+            transform: translateY(-1px);
+        }
+        
+        .btn-secondary {
+            background-color: transparent;
+            color: #6c757d;
+            border: 1px solid #d1d5db;
+        }
+        
+        .btn-secondary:hover {
+            background-color: #f8f9fa;
+            color: #495057;
+        }
+        
+        .btn-outline-danger {
+            color: #dc3545;
+            border: 1px solid #dc3545;
+            background: transparent;
+            font-size: 0.875rem;
+            padding: 0.5rem 1rem;
+        }
+        
+        .btn-outline-danger:hover {
+            background-color: #dc3545;
+            color: white;
+        }
+        
+        .alert {
+            border-radius: 8px;
+            border: none;
+            margin-bottom: 1.5rem;
+        }
+        
+        .persona-meta {
+            background-color: #f8f9fa;
+            padding: 1rem;
+            border-radius: 8px;
+            margin-top: 1rem;
+            font-size: 0.875rem;
+            color: #6c757d;
+        }
+
+        .context-dropdown {
+            position: relative;
+        }
+
+        .context-description {
+            font-size: 0.8rem;
+            color: #6c757d;
+            margin-top: 0.25rem;
+            font-style: italic;
+        }
+    </style>
+</head>
+<body>
+        <!-- Main Container -->
+        <div class="main-container">
+            <div class="form-container">
+                <h2 class="section-title">Basic Information</h2>
+
+                <!-- Display Messages -->
+                {% if messages %}
+                    {% for message in messages %}
+                        <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                            {{ message }}
+                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                        </div>
+                    {% endfor %}
+                {% endif %}
+                <!-- Edit Form -->
+                <form method="post" novalidate>
+                    {% csrf_token %}
+                    
+                    <!-- Profile Name and Context Row -->
+                    <div class="form-group row">
+                        <div>
+                            <label for="{{ form.persona_name.id_for_label }}" class="form-label">
+                                Profile Name <span class="required">*</span>
+                            </label>
+                            {{ form.persona_name }}
+                            {% if form.persona_name.errors %}
+                                <div class="error-text">
+                                    {% for error in form.persona_name.errors %}{{ error }}{% endfor %}
+                                </div>
+                            {% endif %}
+                            <div class="form-text">A descriptive name for this identity profile</div>
+                        </div>
+                        
+                        <div>
+                            <label for="{{ form.context.id_for_label }}" class="form-label">
+                                Context <span class="required">*</span>
+                            </label>
+                            <div class="context-dropdown">
+                                {{ form.context }}
+                                <div class="context-description">Choose the context where this profile will be used</div>
+                            </div>
+                            {% if form.context.errors %}
+                                <div class="error-text">
+                                    {% for error in form.context.errors %}{{ error }}{% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <!-- Description -->
+                    <div class="form-group">
+                        <label for="{{ form.bio.id_for_label }}" class="form-label">Description</label>
+                        {{ form.bio }}
+                        {% if form.bio.errors %}
+                            <div class="error-text">
+                                {% for error in form.bio.errors %}{{ error }}{% endfor %}
+                            </div>
+                        {% endif %}
+                        <div class="form-text">Optional description to help you identify this profile</div>
+                    </div>
+
+                    <!-- Avatar URL (Hidden but functional) -->
+                    <div class="form-group" style="display: none;">
+                        {{ form.avatar_url }}
+                    </div>
+
+                    <!-- Username and Pronouns Row -->
+                    <div class="form-group row">
+                        <div>
+                            <label for="{{ form.username.id_for_label }}" class="form-label">Username</label>
+                            {{ form.username }}
+                            {% if form.username.errors %}
+                                <div class="error-text">
+                                    {% for error in form.username.errors %}{{ error }}{% endfor %}
+                                </div>
+                            {% endif %}
+                            <div class="form-text">{{ form.username.help_text }}</div>
+                        </div>
+                        
+                        <div>
+                            <label for="{{ form.pronouns.id_for_label }}" class="form-label">Pronouns</label>
+                            {{ form.pronouns }}
+                            {% if form.pronouns.errors %}
+                                <div class="error-text">
+                                    {% for error in form.pronouns.errors %}{{ error }}{% endfor %}
+                                </div>
+                            {% endif %}
+                            <div class="form-text">{{ form.pronouns.help_text }}</div>
+                        </div>
+                    </div>
+
+                    <!-- Email and Phone Row -->
+                    <div class="form-group row">
+                        <div>
+                            <label for="{{ form.email.id_for_label }}" class="form-label">Email</label>
+                            {{ form.email }}
+                            {% if form.email.errors %}
+                                <div class="error-text">
+                                    {% for error in form.email.errors %}{{ error }}{% endfor %}
+                                </div>
+                            {% endif %}
+                            <div class="form-text">{{ form.email.help_text }}</div>
+                        </div>
+                        
+                        <div>
+                            <label for="{{ form.phone.id_for_label }}" class="form-label">Phone Number</label>
+                            {{ form.phone }}
+                            {% if form.phone.errors %}
+                                <div class="error-text">
+                                    {% for error in form.phone.errors %}{{ error }}{% endfor %}
+                                </div>
+                            {% endif %}
+                            <div class="form-text">{{ form.phone.help_text }}</div>
+                        </div>
+                    </div>
+
+                    <!-- Visibility and Active Status -->
+                    <div class="form-group row">
+                        <div>
+                            <label for="{{ form.visibility.id_for_label }}" class="form-label">Visibility</label>
+                            {{ form.visibility }}
+                            {% if form.visibility.errors %}
+                                <div class="error-text">
+                                    {% for error in form.visibility.errors %}{{ error }}{% endfor %}
+                                </div>
+                            {% endif %}
+                            <div class="form-text">{{ form.visibility.help_text }}</div>
+                        </div>
+                        
+                        <div>
+                            <div class="form-check">
+                                {{ form.is_active }}
+                                <label class="form-check-label" for="{{ form.is_active.id_for_label }}">
+                                    {{ form.is_active.label }}
+                                </label>
+                                {% if form.is_active.errors %}
+                                    <div class="error-text">
+                                        {% for error in form.is_active.errors %}{{ error }}{% endfor %}
+                                    </div>
+                                {% endif %}
+                                <div class="form-text">{{ form.is_active.help_text }}</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Form Actions -->
+                    <div class="btn-group-actions">
+                        <div>
+                            <a href="{% url 'persona-detail_web' persona.id %}" class="btn btn-secondary me-3">
+                                CANCEL
+                            </a>
+                            <button type="submit" class="btn btn-primary">
+                                SAVE CHANGES
+                            </button>
+                        </div>
+                        <div>
+                            <a href="#" 
+                               class="btn btn-outline-danger"
+                               onclick="return confirm('Are you sure you want to delete this persona?')">
+                                <i class="fas fa-trash me-1"></i>Delete
+                            </a>
+                        </div>
+                    </div>
+                </form>
+
+                <!-- Persona Meta Info -->
+                <div class="persona-meta">
+                    <i class="fas fa-info-circle me-1"></i>
+                    <strong>Created:</strong> {{ persona.created_at|date:"M d, Y g:i A" }} | 
+                    <strong>Last Updated:</strong> {{ persona.updated_at|date:"M d, Y g:i A" }}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- Custom JavaScript -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Avatar functionality
+            const avatarUrlInput = document.getElementById('id_avatar_url');
+            const previewBtn = document.getElementById('preview-avatar');
+            const removeBtn = document.getElementById('remove-avatar');
+            const previewDiv = document.getElementById('avatar-preview');
+            const previewImg = document.getElementById('avatar-img');
+            const placeholderDiv = document.getElementById('avatar-placeholder');
+
+            function showAvatarPreview() {
+                const url = prompt('Enter image URL:');
+                if (url) {
+                    avatarUrlInput.value = url;
+                    previewImg.src = url;
+                    previewDiv.style.display = 'block';
+                    placeholderDiv.style.display = 'none';
+                    
+                    previewImg.onerror = function() {
+                        alert('Unable to load avatar image. Please check the URL.');
+                        removeAvatar();
+                    };
+                }
+            }
+
+            function removeAvatar() {
+                avatarUrlInput.value = '';
+                previewDiv.style.display = 'none';
+                placeholderDiv.style.display = 'flex';
+            }
+
+            previewBtn.addEventListener('click', showAvatarPreview);
+            removeBtn.addEventListener('click', removeAvatar);
+
+            // Form validation
+            const form = document.querySelector('form');
+            form.addEventListener('submit', function(e) {
+                const personaName = document.getElementById('id_persona_name').value.trim();
+                if (!personaName) {
+                    e.preventDefault();
+                    alert('Persona name is required.');
+                    document.getElementById('id_persona_name').focus();
+                }
+            });
+
+            // Context dropdown enhancement
+            const contextSelect = document.getElementById('id_context');
+            const contextDescription = document.querySelector('.context-description');
+            
+            if (contextSelect && contextDescription) {
+                contextSelect.addEventListener('change', function() {
+                    const selected = this.options[this.selectedIndex];
+                    if (selected.text.includes('Academic')) {
+                        contextDescription.textContent = 'University and academic related identity';
+                    } else {
+                        contextDescription.textContent = 'Choose the context where this profile will be used';
+                    }
+                });
+            }
+        });
+    </script>
+</body>
+</html>
