@@ -41,7 +41,7 @@ def login_view(request):
     permission_classes = [BlocklistPermission]
     if request.method == 'POST':
         form = LoginForm(request.POST)
-        if form.is_valid():  # includes captcha validation now!
+        if form.is_valid():
             email = form.cleaned_data['email']
             password = form.cleaned_data['password']
 
@@ -238,8 +238,9 @@ def dashboard_view(request):
                 # Fetch personas if user found
                 if user:
                     try:
-                        personas = persona.objects.filter(user=user).order_by('-created_at')
-                        print(f"Found {personas.count()} personas for user {user}")
+                        # Filter for active personas only
+                        personas = persona.objects.filter(user=user, is_active=True).order_by('-created_at')
+                        print(f"Found {personas.count()} active personas for user {user}")
                     except Exception as e:
                         print(f"Error fetching personas: {e}")
                         personas = []
@@ -255,7 +256,7 @@ def dashboard_view(request):
         'personas': personas,
         'personas_count': len(personas) if personas else 0,
     })
-
+    
 @ratelimit(key="ip", rate='10/m',block=True)
 def logout_view(request):
     # Clear the session
