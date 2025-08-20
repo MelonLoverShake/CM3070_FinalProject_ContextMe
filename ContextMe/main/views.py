@@ -612,7 +612,12 @@ def shared_persona_detail(request, share_token):
         
         # Check expiration
         if share.expires_at and share.expires_at < timezone.now():
-            raise Http404("This share link has expired.")
+            context = {
+                'share': share,
+                'expires_at': share.expires_at,
+                'share_title': share.description,
+            }
+            return render(request, 'shared_expired.html')
 
         # Check max views
         if share.max_views is not None and share.views_count >= share.max_views:
@@ -629,7 +634,7 @@ def shared_persona_detail(request, share_token):
 
     return render(request, "persona_detail_shared.html", {
         "persona": persona,
-        "shared": True,   # flag for template to hide edit/delete buttons
+        "shared": True,   
         "share": share,
     })
 

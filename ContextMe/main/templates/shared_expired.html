@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Link Expired - Share Not Available</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #fdf2f8 0%, #faf5ff 50%, #eff6ff 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #1f2937;
+        }
+        
+        .container {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border-radius: 20px;
+            box-shadow: 0 10px 25px rgba(232, 121, 249, 0.15);
+            padding: 3rem;
+            text-align: center;
+            max-width: 520px;
+            margin: 20px;
+            border: 1px solid rgba(229, 231, 235, 0.3);
+        }
+        
+        .icon {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 2rem;
+            background: #ff6b6b;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            color: white;
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+        
+        h1 {
+            color: #2d3748;
+            margin-bottom: 1rem;
+            font-size: 2rem;
+            font-weight: 700;
+        }
+        
+        .message {
+            color: #4a5568;
+            font-size: 1.1rem;
+            line-height: 1.6;
+            margin-bottom: 2rem;
+        }
+        
+        .details {
+            background: #f7fafc;
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin: 2rem 0;
+            border-left: 4px solid #ff6b6b;
+        }
+        
+        .detail-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.5rem;
+            font-size: 0.9rem;
+        }
+        
+        .detail-row:last-child {
+            margin-bottom: 0;
+        }
+        
+        .detail-label {
+            font-weight: 600;
+            color: #2d3748;
+        }
+        
+        .detail-value {
+            color: #4a5568;
+        }
+        
+        .actions {
+            margin-top: 2rem;
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: all 0.2s;
+            cursor: pointer;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+        }
+        
+        .btn-secondary {
+            background: white;
+            color: #4a5568;
+            border: 2px solid #e2e8f0;
+        }
+        
+        .btn-secondary:hover {
+            border-color: #cbd5e0;
+            background: #f7fafc;
+        }
+        
+        .footer {
+            margin-top: 2rem;
+            font-size: 0.8rem;
+            color: #a0aec0;
+        }
+        
+        @media (max-width: 480px) {
+            .container {
+                padding: 2rem 1.5rem;
+                margin: 10px;
+            }
+            
+            h1 {
+                font-size: 1.5rem;
+            }
+            
+            .actions {
+                flex-direction: column;
+            }
+            
+            .btn {
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Replace icon with custom image matching dashboard vibes -->
+        <div class="image-container" style="margin: 0 auto 2rem; text-align: center;">
+            <div style="position: relative; display: inline-block;">
+                <img src="https://i.postimg.cc/q6Nqq7BL/your-image-name.jpg" 
+                     alt="Link expired illustration" 
+                     style="max-width: 180px; max-height: 180px; border-radius: 20px; box-shadow: 0 10px 25px rgba(232, 121, 249, 0.2); object-fit: cover; border: 3px solid rgba(255, 255, 255, 0.8);">
+                <!-- Decorative gradient overlay to match dashboard theme -->
+                <div style="position: absolute; inset: 0; background: linear-gradient(135deg, rgba(232, 121, 249, 0.1), rgba(168, 85, 247, 0.1)); border-radius: 17px; pointer-events: none;"></div>
+            </div>
+        </div>
+        
+        <h1>Link Expired</h1>
+        
+        <div class="message">
+            Sorry, this share link has expired and is no longer available. The content you're looking for can no longer be accessed through this link.
+        </div>
+        
+        {% if share %}
+        <div class="details">
+            {% if share_title %}
+            <div class="detail-row">
+                <span class="detail-label">Content:</span>
+                <span class="detail-value">{{ share_title }}</span>
+            </div>
+            {% endif %}
+            
+            <div class="detail-row">
+                <span class="detail-label">Expired on:</span>
+                <span class="detail-value">{{ expired_date|date:"F j, Y \a\t g:i A" }}</span>
+            </div>
+            
+            {% if owner %}
+            <div class="detail-row">
+                <span class="detail-label">Shared by:</span>
+                <span class="detail-value">{{ owner.get_full_name|default:owner.username }}</span>
+            </div>
+            {% endif %}
+        </div>
+        {% endif %}
+        
+        <div class="actions">
+            <a href="/" class="btn btn-primary">
+                🏠 Go to Homepage
+            </a>
+            
+            <button onclick="history.back()" class="btn btn-secondary">
+                ← Go Back
+            </button>
+        </div>
+        
+        <div class="footer">
+            Need help? Try requesting a new share link from Persona's Owner. The owner might have set a expire date for the persona you are requesting for.
+        </div>
+    </div>
+    
+    <script>
+        // Optional: Auto-redirect after a delay
+        // setTimeout(() => {
+        //     window.location.href = '/';
+        // }, 10000); // Redirect to home after 10 seconds
+        
+        // Add some interaction
+        document.querySelector('.icon').addEventListener('click', function() {
+            this.style.animation = 'none';
+            setTimeout(() => {
+                this.style.animation = 'pulse 2s infinite';
+            }, 100);
+        });
+    </script>
+</body>
+</html>
