@@ -12,6 +12,8 @@ from django.db import transaction
 from django.http import JsonResponse
 import json
 from django.utils import timezone
+from datetime import timedelta
+from django.urls import reverse
 
 
 
@@ -631,3 +633,250 @@ def shared_persona_detail(request, share_token):
         "share": share,
     })
 
+def PersonaLinksView(request):
+    """
+    View to display all persona sharable links for the authenticated user
+    Uses the same authentication logic as PersonaEdit
+    """
+    try:
+        print("=== DEBUG: PersonaLinksView started ===")
+        
+        # First, authenticate user using the same logic as PersonaEdit
+        supabase_user_raw = request.session.get('supabase_user')
+        print(f"DEBUG: supabase_user_raw type: {type(supabase_user_raw)}")
+        print(f"DEBUG: supabase_user_raw content: {supabase_user_raw}")
+        
+        if not supabase_user_raw:
+            print("DEBUG: No supabase_user found in session - redirecting to login")
+            return redirect('login')
+        
+        # Parse JSON string to dictionary if it's a string
+        if isinstance(supabase_user_raw, str):
+            try:
+                supabase_user_data = json.loads(supabase_user_raw)
+                print(f"DEBUG: Successfully parsed JSON: {supabase_user_data}")
+            except json.JSONDecodeError as e:
+                print(f"DEBUG: Failed to parse JSON from session: {e}")
+                return redirect('login')
+        elif isinstance(supabase_user_raw, dict):
+            supabase_user_data = supabase_user_raw
+            print(f"DEBUG: Using dict directly: {supabase_user_data}")
+        else:
+            print(f"DEBUG: Unexpected type for supabase_user: {type(supabase_user_raw)}")
+            return redirect('login')
+        
+        # Extract email
+        email = supabase_user_data.get('email')
+        print(f"DEBUG: Extracted email: {email}")
+        
+        if not email:
+            print("DEBUG: No email found in session data - redirecting to login")
+            return redirect('login')
+        
+        # Find the user
+        user = None
+        print("DEBUG: Attempting to find user...")
+        try:
+            from login.models import User
+            print("DEBUG: Imported login.models.User successfully")
+            user = get_object_or_404(User, email=email)
+            print(f"DEBUG: Found user in login.models.User: {user} (ID: {user.id})")
+        except Exception as e:
+            print(f"DEBUG: Error with login.models.User: {e}")
+            print(f"DEBUG: Exception type: {type(e).__name__}")
+            try:
+                from django.contrib.auth.models import User as DjangoUser
+                print("DEBUG: Trying Django User model...")
+                user = get_object_or_404(DjangoUser, email=email)
+                print(f"DEBUG: Found user in Django User: {user} (ID: {user.id})")
+            except Exception as e2:
+                print(f"DEBUG: Error with Django User: {e2}")
+                print(f"DEBUG: Exception type: {type(e2).__name__}")
+                print("DEBUG: No user found - redirecting to persona-list")
+                return redirect('persona-list')
+        
+        print(f"DEBUG: User authentication successful. User: {user}")
+        
+        # Get user's personas and their share links
+        try:
+            print("DEBUG: Starting to fetch persona data...")
+            
+            # Import your models (adjust import paths as needed)
+            try:
+                from .models import persona, PersonaShareLink
+                print("DEBUG: Successfully imported models: persona, PersonaShareLink")
+            except ImportError as import_err:
+                print(f"DEBUG: Import error for models: {import_err}")
+                # Try different import paths
+                try:
+                    from personas.models import persona, PersonaShareLink
+                    print("DEBUG: Successfully imported from personas.models")
+                except ImportError:
+                    try:
+                        from persona.models import persona, PersonaShareLink
+                        print("DEBUG: Successfully imported from persona.models")
+                    except ImportError as final_err:
+                        print(f"DEBUG: Final import error: {final_err}")
+                        print("DEBUG: Could not import models - redirecting to persona-list")
+                        return redirect('persona-list')
+            
+            # Get all user personas
+            print(f"DEBUG: Querying personas for user {user.id}...")
+            user_personas = persona.objects.filter(user=user)
+            persona_count = user_personas.count()
+            print(f"DEBUG: Found {persona_count} personas for user {user}")
+            
+            if persona_count == 0:
+                print("DEBUG: User has no personas")
+            else:
+                persona_names = [p.persona_name or f"ID:{p.id}" for p in user_personas[:5]]
+                print(f"DEBUG: Sample persona names: {persona_names}")
+            
+            # Get all share links for user's personas
+            print("DEBUG: Querying PersonaShareLink...")
+            try:
+                share_links = PersonaShareLink.objects.filter(
+                    persona__user=user
+                ).select_related('persona').order_by('-created_at')
+                
+                link_count = share_links.count()
+                print(f"DEBUG: Found {link_count} share links for user personas")
+                
+                if link_count > 0:
+                    sample_links = share_links[:3]
+                    for i, link in enumerate(sample_links):
+                        # FIXED: Using share_token instead of share_url
+                        print(f"DEBUG: Link {i+1}: ID={link.id}, Token={link.share_token[:20]}..., Active={link.is_active}")
+                
+            except Exception as link_query_error:
+                print(f"DEBUG: Error querying PersonaShareLink: {link_query_error}")
+                print(f"DEBUG: Error type: {type(link_query_error).__name__}")
+                
+                # Check if the table exists
+                try:
+                    PersonaShareLink.objects.all().count()
+                    print("DEBUG: PersonaShareLink table exists")
+                except Exception as table_error:
+                    print(f"DEBUG: PersonaShareLink table issue: {table_error}")
+                
+                # Redirect with error info
+                print("DEBUG: Share links query failed - redirecting to persona-list")
+                return redirect('persona-list')
+            
+            # Calculate statistics
+            print("DEBUG: Calculating statistics...")
+            total_links = share_links.count()
+            
+            current_time = timezone.now()
+            print(f"DEBUG: Current time: {current_time}")
+            
+            active_links = share_links.filter(
+                expires_at__gt=current_time,
+                is_active=True
+            ).count()
+            
+            expired_links = share_links.filter(
+                expires_at__lte=current_time
+            ).count() + share_links.filter(is_active=False).count()
+            
+            # Links expiring in next 24 hours
+            next_24_hours = current_time + timedelta(hours=24)
+            expiring_soon = share_links.filter(
+                expires_at__lte=next_24_hours,
+                expires_at__gt=current_time,
+                is_active=True
+            ).count()
+            
+            # Calculate total views - FIXED: using current_views (correct field name)
+            total_views = sum(link.current_views for link in share_links if link.current_views)
+            
+            print(f"DEBUG: Stats calculated - Total: {total_links}, Active: {active_links}, Expiring: {expiring_soon}, Expired: {expired_links}, Views: {total_views}")
+            
+            # Prepare link data with status and time calculations
+            print("DEBUG: Processing individual links...")
+            link_data = []
+            for i, link in enumerate(share_links):
+                now = timezone.now()
+                
+                # Determine status
+                if not link.is_active:
+                    status = 'expired'
+                    time_display = 'Manually expired'
+                elif link.expires_at <= now:
+                    status = 'expired'
+                    time_diff = now - link.expires_at
+                    if time_diff.total_seconds() < 3600:  # Less than 1 hour
+                        minutes = int(time_diff.total_seconds() / 60)
+                        time_display = f"{minutes}m ago" if minutes > 0 else "Just now"
+                    else:
+                        hours = int(time_diff.total_seconds() / 3600)
+                        time_display = f"{hours}h ago"
+                else:
+                    time_diff = link.expires_at - now
+                    if time_diff.total_seconds() <= 86400:  # 24 hours
+                        status = 'expiring'
+                    else:
+                        status = 'active'
+                    
+                    # Format time remaining
+                    days = time_diff.days
+                    hours = int(time_diff.seconds / 3600)
+                    minutes = int((time_diff.seconds % 3600) / 60)
+                    
+                    if days > 0:
+                        time_display = f"{days}d {hours}h {minutes}m"
+                    elif hours > 0:
+                        time_display = f"{hours}h {minutes}m"
+                    else:
+                        time_display = f"{minutes}m"
+                
+                link_data.append({
+                    'id': link.id,
+                    'persona_name': link.persona.persona_name or 'Unnamed Persona',
+                    'share_token': request.build_absolute_uri(reverse('shared-persona-detail', args=[link.share_token])),
+                    'view_count': link.current_views or 0,  
+                    'created_at': link.created_at,
+                    'expires_at': link.expires_at,
+                    'status': status,
+                    'time_display': time_display,
+                    'is_active': link.is_active
+                })
+                
+                if i < 3:  
+                    print(f"DEBUG: Processed link {i+1}: {link.persona.persona_name} - {status}")
+            
+            stats = {
+                'total_links': total_links,
+                'active_links': active_links,
+                'expiring_soon': expiring_soon,
+                'expired_links': expired_links,
+                'total_views': total_views
+            }
+            
+            context = {
+                'user': user,
+                'link_data': link_data,
+                'stats': stats,
+                'page_title': 'Persona Links Dashboard'
+            }
+            
+            print(f"DEBUG: Context prepared. Rendering template with {len(link_data)} links")
+            print("DEBUG: About to render persona_links.html")
+            
+            return render(request, 'persona_links.html', context)
+            
+        except Exception as e:
+            print(f"DEBUG: Error in persona data section: {e}")
+            print(f"DEBUG: Exception type: {type(e).__name__}")
+            import traceback
+            traceback.print_exc()
+            print("DEBUG: Redirecting to persona-list due to persona data error")
+            return redirect('persona-list')
+    
+    except Exception as e:
+        print(f"DEBUG: Unexpected error in PersonaLinksView: {e}")
+        print(f"DEBUG: Exception type: {type(e).__name__}")
+        import traceback
+        traceback.print_exc()
+        print("DEBUG: Redirecting to persona-list due to unexpected error")
+        return redirect('persona-list')

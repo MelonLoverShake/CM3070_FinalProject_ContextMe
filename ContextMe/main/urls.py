@@ -12,5 +12,6 @@ urlpatterns = [
     path('edit/<uuid:id>/', views.PersonaEdit, name='persona-edit'),
     path('persona/<uuid:id>/create-share/', views.create_persona_share_link, name='create_persona_share_link'),
     path('persona/shared/<str:share_token>/', views.shared_persona_detail, name='shared-persona-detail'),
+    path('persona-links/', views.PersonaLinksView, name='persona-links'),
 
 ]
