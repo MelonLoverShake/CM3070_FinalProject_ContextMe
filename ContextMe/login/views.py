@@ -259,6 +259,75 @@ def dashboard_view(request):
     
 @ratelimit(key="ip", rate='10/m',block=True)
 def logout_view(request):
+    user = None
+    
+    # Try to get the user before clearing the session (for logging purposes)
+    try:
+        supabase_user_raw = request.session.get('supabase_user')
+        
+        if supabase_user_raw:
+            # Parse JSON string to dictionary if it's a string
+            if isinstance(supabase_user_raw, str):
+                try:
+                    supabase_user_data = json.loads(supabase_user_raw)
+                except json.JSONDecodeError as e:
+                    print(f"Failed to parse JSON from session: {e}")
+                    supabase_user_data = None
+            elif isinstance(supabase_user_raw, dict):
+                supabase_user_data = supabase_user_raw
+            else:
+                print(f"Unexpected type for supabase_user: {type(supabase_user_raw)}")
+                supabase_user_data = None
+            
+            # Extract email and find user
+            if supabase_user_data:
+                email = supabase_user_data.get('email')
+                
+                if email:
+                    try:
+                        from login.models import User
+                        user = User.objects.filter(email=email).first()
+                        if not user:
+                            from django.contrib.auth.models import User as DjangoUser
+                            user = DjangoUser.objects.filter(email=email).first()
+                    except Exception as e:
+                        print(f"Error finding user for logout logging: {e}")
+                        user = None
+    
+    except Exception as e:
+        print(f"Error extracting user data for logout logging: {e}")
+    
+    # Log the logout activity before clearing the session
+    if user:
+        try:
+            from log.models import ActivityLog
+            from django.db import transaction
+            
+            # Get client IP address
+            def get_client_ip(request):
+                x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
+                if x_forwarded_for:
+                    ip = x_forwarded_for.split(',')[0]
+                else:
+                    ip = request.META.get('REMOTE_ADDR')
+                return ip
+            
+            with transaction.atomic():
+                activity_log = ActivityLog.objects.create(
+                    user=user,
+                    persona=None,  # No specific persona for logout
+                    action_type='LOGOUT',
+                    description=f"User '{user.email if hasattr(user, 'email') else user.username}' logged out",
+                    ip_address=get_client_ip(request)
+                )
+            
+            print(f"✅ Activity logged successfully: User logout, Log ID: {activity_log.id}")
+            
+        except Exception as log_error:
+            print(f"❌ Failed to log logout activity: {log_error}")
+            import traceback
+            traceback.print_exc()
+    
     # Clear the session
     request.session.flush()
     messages.success(request, "You have been logged out successfully.")
