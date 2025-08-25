@@ -260,8 +260,7 @@ def dashboard_view(request):
 @ratelimit(key="ip", rate='10/m',block=True)
 def logout_view(request):
     user = None
-    
-    # Try to get the user before clearing the session (for logging purposes)
+    # Try to get the user before clearing the session 
     try:
         supabase_user_raw = request.session.get('supabase_user')
         
@@ -374,23 +373,71 @@ def user_profile_view(request):
             from django.shortcuts import redirect
             return redirect('login')
     
-    # NEW: Check if user has completed consent
+    # FIXED: Check if user has completed consent by querying Supabase
     user_has_consent = False
-    if user_email:
-        # Check if consent record exists for this user
-        try:
-            from consent.models import consent 
-            consent_record = Consent.objects.filter(
-                email=user_email  
-            ).exists()
-            user_has_consent = consent_record
-        except:
-            user_has_consent = False
+    if user_profile:
+        user_has_consent = check_user_consent(user_profile)
     
     return render(request, 'profile.html', {
         'user': user_profile,
-        'user_has_consent': user_has_consent  # NEW: Pass consent status to template
+        'user_has_consent': user_has_consent
     })
+
+def check_user_consent(user_profile):
+    """
+    Check if user has given consent by querying Supabase consent_consent table
+    """
+    try:
+        # Get the user ID that should be in the consent table
+        # This should match what you used in the consent recording
+        if hasattr(user_profile, 'id'):
+            if isinstance(user_profile.id, uuid.UUID):
+                user_id = str(user_profile.id)
+            else:
+                # Try to get UUID from login_user table
+                try:
+                    from login.models import User as LoginUser
+                    login_user = LoginUser.objects.get(id=user_profile.id)
+                    user_id = str(login_user.id)
+                except Exception as e:
+                    print(f"Error finding user UUID for consent check: {e}")
+                    user_id = str(user_profile.id)
+        else:
+            return False
+        
+        # Query Supabase consent_consent table
+        supabase_url = settings.SUPABASE_URL
+        supabase_key = settings.SUPABASE_SERVICE_ROLE_KEY
+        
+        headers = {
+            'apikey': supabase_key,
+            'Authorization': f'Bearer {supabase_key}',
+            'Content-Type': 'application/json'
+        }
+        
+        # Query for consent records for this user
+        params = {
+            'user_id': f'eq.{user_id}',
+            'consent_given': 'eq.true',
+            'consent_type': 'eq.privacy_policy'
+        }
+        
+        response = requests.get(
+            f'{supabase_url}/rest/v1/consent_consent',
+            headers=headers,
+            params=params
+        )
+        
+        if response.status_code == 200:
+            consent_records = response.json()
+            return len(consent_records) > 0
+        else:
+            print(f"Error checking consent: {response.status_code} - {response.text}")
+            return False
+            
+    except Exception as e:
+        print(f"Error in check_user_consent: {str(e)}")
+        return False
 
 def change_password_view(request):
     # ✅ Ensure user is logged in via Supabase session

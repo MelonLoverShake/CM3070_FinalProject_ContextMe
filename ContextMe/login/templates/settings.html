@@ -1,410 +1,341 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Settings</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Settings</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@400;500;600&display=swap');
 
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            padding: 20px;
-        }
+:root {
+    --primary: #e879f9;
+    --primary-light: #f3e8ff;
+    --primary-dark: #c026d3;
+    --accent: #06b6d4;
+    --success: #22c55e;
+    --danger: #ff6b6b;
+    --gray-50: #f9fafb;
+    --gray-100: #f3f4f6;
+    --gray-200: #e5e7eb;
+    --gray-500: #6b7280;
+    --gray-800: #1f2937;
+    --shadow: 0 4px 6px rgba(0,0,0,0.1);
+    --shadow-lg: 0 10px 25px rgba(0,0,0,0.1);
+}
 
-        .container {
-            max-width: 800px;
-            margin: 0 auto;
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(10px);
-            border-radius: 20px;
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
-            overflow: hidden;
-            animation: slideUp 0.6s ease-out;
-        }
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
 
-        @keyframes slideUp {
-            from {
-                opacity: 0;
-                transform: translateY(30px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
+body {
+    font-family: 'Inter', sans-serif;
+    min-height: 100vh;
+    background: linear-gradient(135deg, #fdf2f8 0%, #faf5ff 50%, #eff6ff 100%);
+    color: var(--gray-800);
+    line-height: 1.6;
+    padding: 20px;
+}
 
-        .header {
-            background: linear-gradient(135deg, #2c3e50, #34495e);
-            color: white;
-            padding: 30px;
-            text-align: center;
-            position: relative;
-            overflow: hidden;
-        }
+.container {
+    max-width: 800px;
+    margin: 0 auto;
+    background: rgba(255, 255, 255, 0.9);
+    backdrop-filter: blur(20px);
+    border-radius: 20px;
+    box-shadow: var(--shadow-lg);
+    overflow: hidden;
+    padding: 0;
+    animation: fadeInUp 0.6s ease forwards;
+}
 
-        .header::before {
-            content: '';
-            position: absolute;
-            top: -50%;
-            left: -50%;
-            width: 200%;
-            height: 200%;
-            background: repeating-linear-gradient(
-                45deg,
-                transparent,
-                transparent 10px,
-                rgba(255, 255, 255, 0.03) 10px,
-                rgba(255, 255, 255, 0.03) 20px
-            );
-            animation: slide 20s linear infinite;
-        }
+@keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
 
-        @keyframes slide {
-            0% { transform: translateX(-50px) translateY(-50px); }
-            100% { transform: translateX(50px) translateY(50px); }
-        }
+.header {
+    background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+    color: white;
+    padding: 2rem;
+    text-align: center;
+    font-family: 'Playfair Display', serif;
+}
 
-        .header h1 {
-            font-size: 2.5rem;
-            font-weight: 700;
-            margin-bottom: 10px;
-            position: relative;
-            z-index: 1;
-        }
+.header h1 {
+    font-size: 2rem;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+}
 
-        .header p {
-            font-size: 1.1rem;
-            opacity: 0.9;
-            position: relative;
-            z-index: 1;
-        }
+.header p {
+    font-size: 1rem;
+    opacity: 0.9;
+}
 
-        .settings-content {
-            padding: 40px;
-        }
+.back-home-button {
+    display: inline-block;
+    margin-top: 1rem;
+    padding: 0.5rem 1rem;
+    background: var(--primary-light);
+    color: var(--primary-dark);
+    border-radius: 10px;
+    font-weight: 500;
+    text-decoration: none;
+    transition: all 0.3s ease;
+}
 
-        .settings-section {
-            margin-bottom: 40px;
-            padding: 30px;
-            border: 2px solid #e1e8ed;
-            border-radius: 15px;
-            background: white;
-            transition: all 0.3s ease;
-            position: relative;
-            overflow: hidden;
-        }
+.back-home-button:hover {
+    background: var(--primary);
+    color: white;
+    transform: translateY(-2px);
+    box-shadow: var(--shadow);
+}
 
-        .settings-section::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
-            transition: left 0.6s ease;
-        }
+.settings-content {
+    padding: 2rem;
+}
 
-        .settings-section:hover::before {
-            left: 100%;
-        }
+.settings-section {
+    background: rgba(255,255,255,0.95);
+    backdrop-filter: blur(15px);
+    border-radius: 16px;
+    border: 1px solid var(--gray-200);
+    padding: 1.5rem 2rem;
+    margin-bottom: 2rem;
+    box-shadow: var(--shadow);
+    transition: all 0.3s ease;
+    position: relative;
+}
 
-        .settings-section:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-            border-color: #ff6b6b;
-        }
+.settings-section:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-lg);
+    border-color: var(--primary);
+}
 
-        .section-title {
-            font-size: 1.5rem;
-            font-weight: 600;
-            color: #2c3e50;
-            margin-bottom: 15px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
+.section-title {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--gray-800);
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
 
-        .section-title::before {
-            content: '⚠️';
-            font-size: 1.2rem;
-        }
+.section-title::before {
+    content: '⚠️';
+    font-size: 1rem;
+}
 
-        .section-description {
-            color: #666;
-            margin-bottom: 25px;
-            line-height: 1.6;
-            font-size: 1rem;
-        }
+.section-description {
+    color: var(--gray-500);
+    margin-bottom: 1rem;
+    font-size: 0.9rem;
+}
 
-        .danger-zone {
-            border-color: #ff6b6b;
-            background: linear-gradient(135deg, #fff5f5, #fff);
-        }
+.danger-zone {
+    border-color: var(--danger);
+    background: linear-gradient(135deg, #fff5f5, #fff);
+}
 
-        .delete-button {
-            background: linear-gradient(135deg, #ff6b6b, #ee5a6f);
-            color: white;
-            border: none;
-            padding: 15px 30px;
-            border-radius: 10px;
-            font-size: 1rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            position: relative;
-            overflow: hidden;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
+.warning-text {
+    background: rgba(255, 107, 107, 0.1);
+    border: 1px solid rgba(255, 107, 107, 0.3);
+    border-radius: 8px;
+    padding: 1rem;
+    margin-bottom: 1.5rem;
+    color: var(--danger);
+    font-weight: 500;
+}
 
-        .delete-button::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
-            transition: left 0.6s ease;
-        }
+.delete-button {
+    background: linear-gradient(135deg, var(--danger), #ee5a6f);
+    color: white;
+    border: none;
+    padding: 0.75rem 1.5rem;
+    border-radius: 10px;
+    font-size: 0.95rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
 
-        .delete-button:hover::before {
-            left: 100%;
-        }
+.delete-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 25px rgba(255,107,107,0.3);
+    background: linear-gradient(135deg, #ff5252, #e91e63);
+}
 
-        .delete-button:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 25px rgba(255, 107, 107, 0.3);
-            background: linear-gradient(135deg, #ff5252, #e91e63);
-        }
+/* Modal */
+.modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.6);
+    backdrop-filter: blur(5px);
+    z-index: 1000;
+}
 
-        .delete-button:active {
-            transform: translateY(0);
-        }
+.modal-content {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: rgba(255,255,255,0.95);
+    backdrop-filter: blur(15px);
+    padding: 2rem;
+    border-radius: 16px;
+    box-shadow: var(--shadow-lg);
+    max-width: 450px;
+    width: 90%;
+    text-align: center;
+}
 
-        .warning-text {
-            background: rgba(255, 107, 107, 0.1);
-            border: 1px solid rgba(255, 107, 107, 0.3);
-            border-radius: 8px;
-            padding: 15px;
-            margin-bottom: 20px;
-            color: #d63031;
-            font-weight: 500;
-        }
+.modal h2 {
+    color: var(--danger);
+    margin-bottom: 1rem;
+}
 
-        .modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.7);
-            backdrop-filter: blur(5px);
-            z-index: 1000;
-            animation: fadeIn 0.3s ease;
-        }
+.modal p {
+    color: var(--gray-500);
+    margin-bottom: 1.5rem;
+    font-size: 0.9rem;
+}
 
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
-        }
+.modal-buttons {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    flex-wrap: wrap;
+}
 
-        .modal-content {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background: white;
-            padding: 40px;
-            border-radius: 20px;
-            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3);
-            max-width: 500px;
-            width: 90%;
-            text-align: center;
-            animation: scaleIn 0.3s ease;
-        }
+.confirm-btn, .cancel-btn, .modal-back-btn {
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    border: none;
+    font-size: 0.9rem;
+    transition: all 0.2s ease;
+}
 
-        @keyframes scaleIn {
-            from {
-                opacity: 0;
-                transform: translate(-50%, -50%) scale(0.8);
-            }
-            to {
-                opacity: 1;
-                transform: translate(-50%, -50%) scale(1);
-            }
-        }
+.confirm-btn {
+    background: var(--danger);
+    color: white;
+}
 
-        .modal h2 {
-            color: #ff6b6b;
-            margin-bottom: 20px;
-            font-size: 1.8rem;
-        }
+.confirm-btn:hover {
+    background: #ff5252;
+}
 
-        .modal p {
-            color: #666;
-            margin-bottom: 30px;
-            line-height: 1.6;
-        }
+.cancel-btn {
+    background: var(--gray-100);
+    color: var(--gray-800);
+}
 
-        .modal-buttons {
-            display: flex;
-            gap: 15px;
-            justify-content: center;
-        }
+.cancel-btn:hover {
+    background: var(--gray-200);
+}
 
-        .confirm-btn, .cancel-btn {
-            padding: 12px 25px;
-            border: none;
-            border-radius: 8px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            font-size: 1rem;
-        }
+.modal-back-btn {
+    background: var(--primary-light);
+    color: var(--primary-dark);
+}
 
-        .confirm-btn {
-            background: #ff6b6b;
-            color: white;
-        }
+.modal-back-btn:hover {
+    background: var(--primary);
+    color: white;
+}
 
-        .confirm-btn:hover {
-            background: #ff5252;
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(255, 107, 107, 0.3);
-        }
-
-        .cancel-btn {
-            background: #e1e8ed;
-            color: #2c3e50;
-        }
-
-        .cancel-btn:hover {
-            background: #d1d9e0;
-            transform: translateY(-2px);
-        }
-
-        @media (max-width: 768px) {
-            .container {
-                margin: 10px;
-                border-radius: 15px;
-            }
-            
-            .header {
-                padding: 20px;
-            }
-            
-            .header h1 {
-                font-size: 2rem;
-            }
-            
-            .settings-content {
-                padding: 20px;
-            }
-            
-            .settings-section {
-                padding: 20px;
-            }
-            
-            .modal-content {
-                padding: 30px 20px;
-            }
-            
-            .modal-buttons {
-                flex-direction: column;
-            }
-        }
-    </style>
+@media (max-width: 768px) {
+    .settings-content { padding: 1rem; }
+    .settings-section { padding: 1rem 1.25rem; }
+    .modal-content { padding: 1.5rem 1rem; }
+}
+</style>
 </head>
 <body>
-    <div class="container">
-        <div class="header">
-            <h1>Settings</h1>
-            <p>Manage your account preferences and data</p>
-        </div>
-        
-        <div class="settings-content">
-            <div class="settings-section danger-zone">
-                <h2 class="section-title">Danger Zone</h2>
-                <p class="section-description">
-                    Once you delete your account, there is no going back. Please be certain before proceeding.
-                </p>
-                
-                <div class="warning-text">
-                    ⚠️ This action cannot be undone. All your data, preferences, and account information will be permanently deleted.
-                </div>
-                
-                <form method="post" action="{% url 'delete_account' %}" id="deleteForm" style="display: none;">
-                    {% csrf_token %}
-                </form>
-                
-                <button class="delete-button" onclick="showDeleteModal()">
-                    Delete Account
-                </button>
-            </div>
-        </div>
+<div class="container">
+    <div class="header">
+        <h1>Settings</h1>
+        <p>Manage your account preferences and data</p>
+        <a href="/auth/dashboard" class="back-home-button">← Back Home</a>
     </div>
-
-    <!-- Confirmation Modal -->
-    <div id="deleteModal" class="modal">
-        <div class="modal-content">
-            <h2>🚨 Delete Account</h2>
-            <p>
-                Are you absolutely sure you want to delete your account? 
-                This action is permanent and cannot be undone. All your data will be lost forever.
+    
+    <div class="settings-content">
+        <div class="settings-section danger-zone">
+            <h2 class="section-title">Danger Zone</h2>
+            <p class="section-description">
+                Once you delete your account, there is no going back. Please be certain before proceeding.
             </p>
-            <div class="modal-buttons">
-                <button type="button" class="confirm-btn" onclick="deleteAccount()">Yes, Delete My Account</button>
-                <button type="button" class="cancel-btn" onclick="hideDeleteModal()">Cancel</button>
+            
+            <div class="warning-text">
+                ⚠️ This action cannot be undone. All your data, preferences, and account information will be permanently deleted.
             </div>
+            
+            <form method="post" action="{% url 'delete_account' %}" id="deleteForm" style="display: none;">
+                {% csrf_token %}
+            </form>
+            
+            <button class="delete-button" onclick="showDeleteModal()">
+                Delete Account
+            </button>
         </div>
     </div>
+</div>
 
-    <script>
-        function showDeleteModal() {
-            document.getElementById('deleteModal').style.display = 'block';
-            document.body.style.overflow = 'hidden';
-        }
+<!-- Confirmation Modal -->
+<div id="deleteModal" class="modal">
+    <div class="modal-content">
+        <h2>🚨 Delete Account</h2>
+        <p>
+            Are you absolutely sure you want to delete your account? 
+            This action is permanent and cannot be undone. All your data will be lost forever.
+        </p>
+        <div class="modal-buttons">
+            <button type="button" class="confirm-btn" onclick="deleteAccount()">Yes, Delete My Account</button>
+            <button type="button" class="cancel-btn" onclick="hideDeleteModal()">Cancel</button>
+            <a href="/auth/dashboard" class="modal-back-btn">← Back Home</a>
+        </div>
+    </div>
+</div>
 
-        function hideDeleteModal() {
-            document.getElementById('deleteModal').style.display = 'none';
-            document.body.style.overflow = 'auto';
-        }
+<script>
+function showDeleteModal() {
+    document.getElementById('deleteModal').style.display = 'block';
+    document.body.style.overflow = 'hidden';
+}
 
-        function deleteAccount() {
-            // Show loading state
-            const confirmBtn = document.querySelector('.confirm-btn');
-            const originalText = confirmBtn.textContent;
-            confirmBtn.textContent = 'Deleting...';
-            confirmBtn.disabled = true;
-            
-            // Submit the form
-            document.getElementById('deleteForm').submit();
-        }
+function hideDeleteModal() {
+    document.getElementById('deleteModal').style.display = 'none';
+    document.body.style.overflow = 'auto';
+}
 
-        // Close modal when clicking outside of it
-        window.onclick = function(event) {
-            const modal = document.getElementById('deleteModal');
-            if (event.target === modal) {
-                hideDeleteModal();
-            }
-        }
+function deleteAccount() {
+    const confirmBtn = document.querySelector('.confirm-btn');
+    confirmBtn.textContent = 'Deleting...';
+    confirmBtn.disabled = true;
+    document.getElementById('deleteForm').submit();
+}
 
-        // Close modal with Escape key
-        document.addEventListener('keydown', function(event) {
-            if (event.key === 'Escape') {
-                hideDeleteModal();
-            }
-        });
-    </script>
+window.onclick = function(event) {
+    const modal = document.getElementById('deleteModal');
+    if (event.target === modal) {
+        hideDeleteModal();
+    }
+}
+
+document.addEventListener('keydown', function(event) {
+    if (event.key === 'Escape') {
+        hideDeleteModal();
+    }
+});
+</script>
 </body>
 </html>

@@ -6,7 +6,6 @@
     <title>ContextMe - Dashboard</title>
     
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/foundation/6.8.1/css/foundation.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/foundation/6.8.1/css/foundation-icons.min.css">
     
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@400;500;600&display=swap');
@@ -555,6 +554,8 @@
             }
         }
     </style>
+    <!-- Font Awesome Free CSS -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
 </head>
 <body>
     <div class="dashboard-container">
@@ -573,17 +574,23 @@
                     </div>
                     <div class="cell shrink">
                         <div class="header-actions">
-                            <button class="notification-bell">
-                                <i class="fi-bell"></i>
-                                <span class="notification-badge">2</span>
-                            </button>
-                            <a href="#" class="action-btn btn-primary">
-                                <i class="fi-plus"></i> New Identity
-                            </a>
-                             <a href="{% url 'logout' %}" class="action-btn" style="background: var(--gray-600); color: white;">
-                                <i class="fi-power"></i> Logout
-                            </a>
-                        </div>
+    <a href="/auth/profile" class="notification-bell" 
+       style="background: var(--primary-light); color: var(--primary-dark);" 
+       title="Profile">
+        <i class="fa-regular fa-user"></i>
+    </a>
+
+    <!-- Action Buttons -->
+    <a href="#" class="action-btn btn-primary">
+        <i class="fi-plus"></i> New Identity
+    </a>
+
+    <a href="{% url 'logout' %}" class="action-btn" 
+       style="background: var(--gray-600); color: white;">
+        <i class="fi-power"></i> Logout
+    </a>
+</div>
+
                     </div>
                 </div>
             </div>
@@ -602,16 +609,16 @@
                             <i class="fi-graph-trend"></i> Overview
                         </a>
                         <a href="/main/personas/list" class="nav-item">
-                            <i class="fi-torso"></i> My Identities
+                            <i class="fa-regular fa-id-card"></i> My Identities
                         </a>
                         <a href="#privacy" class="nav-item">
-                            <i class="fi-lock"></i> Privacy Settings
+                            <i class="fa-solid fa-house-lock"></i> Privacy Settings
                         </a>
                         <a href="/logs/activity-log" class="nav-item">
-                            <i class="fi-list"></i> Activity Log
+                            <i class="fa-solid fa-chart-line"></i> Activity Log
                         </a>
                         <a href="{% url 'settings_account' %}" class="nav-item">
-                            <i class="fi-widget"></i> Settings
+                            <i class="fa-solid fa-gears"></i> Settings
                         </a>
                     </nav>
                 </div>
@@ -623,14 +630,14 @@
                         <div class="stats-grid">
                             <div class="stat-card identities fade-in">
                                 <div class="stat-icon">
-                                    <i class="fi-torso"></i>
+                                    <i class="fa-regular fa-id-card"></i>
                                 </div>
                                 <div class="stat-number">{{personas_count}}</div>
                                 <div class="stat-label">Active Identities</div>
                             </div>
                             <div class="stat-card privacy fade-in" style="animation-delay: 0.3s;">
                                 <div class="stat-icon">
-                                    <i class="fi-lock"></i>
+                                    <i class="fa-solid fa-house-lock"></i>
                                 </div>
                                 <div class="stat-number">8</div>
                                 <div class="stat-label">Privacy Controls</div>
