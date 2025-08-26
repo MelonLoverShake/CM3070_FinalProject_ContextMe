@@ -2,154 +2,549 @@
 <html>
 <head>
     <meta charset="UTF-8">
-    <title>Activity Log</title>
+    <title>Activity Log - System Dashboard</title>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
 
-        *{
-            font-family: "Playfair";
+        * {
+            font-family: 'Inter', sans-serif;
+            box-sizing: border-box;
         }
 
         body {
-            font-family: 'Inter', sans-serif;
-            background: #f0f2f5;
+            background: #f8fafc;
             margin: 0;
-            padding: 20px;
-            color: #333;
+            padding: 24px;
+            color: #1e293b;
+            min-height: 100vh;
         }
 
-        .log-container {
+        .dashboard-container {
             background: #ffffff;
-            padding: 30px 25px;
             border-radius: 12px;
-            max-width: 1000px;
-            margin: auto;
-            box-shadow: 0 4px 25px rgba(0, 0, 0, 0.08);
+            max-width: 1200px;
+            margin: 0 auto;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
+            border: 1px solid #e2e8f0;
+            overflow: hidden;
         }
 
-        h1 {
-            margin-bottom: 25px;
-            text-align: center;
+        .header {
+            background: #ffffff;
+            color: #1e293b;
+            padding: 32px;
+            text-align: left;
+            border-bottom: 1px solid #e2e8f0;
+            position: relative;
+        }
+
+        .header h1 {
+            margin: 0;
+            font-size: 28px;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+        }
+
+        .header p {
+            margin: 8px 0 0 0;
+            opacity: 0.9;
+            font-size: 16px;
+            font-weight: 300;
+        }
+
+        .controls-section {
+            background: #f8fafc;
+            padding: 25px 30px;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .filter-group {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .filter-label {
             font-weight: 600;
-            color: #1f2937;
+            color: #4a5568;
+            font-size: 14px;
+        }
+
+        .filter-select {
+            padding: 10px 16px;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            background: white;
+            font-size: 14px;
+            font-weight: 500;
+            color: #2d3748;
+            transition: all 0.2s ease;
+            min-width: 150px;
+        }
+
+        .filter-select:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .clear-filter {
+            padding: 10px 20px;
+            background: #e53e3e;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .clear-filter:hover {
+            background: #c53030;
+            transform: translateY(-1px);
+        }
+
+        .stats {
+            display: flex;
+            gap: 15px;
+            margin-left: auto;
+        }
+
+        .stat-item {
+            background: white;
+            padding: 12px 20px;
+            border-radius: 8px;
+            border: 2px solid #e2e8f0;
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 18px;
+            font-weight: 700;
+            color: #2d3748;
+        }
+
+        .stat-label {
+            font-size: 12px;
+            color: #718096;
+            font-weight: 500;
+            text-transform: uppercase;
+        }
+
+        .table-container {
+            padding: 30px;
+        }
+
+        .table-wrapper {
+            overflow-x: auto;
+            border-radius: 12px;
+            border: 1px solid #e2e8f0;
         }
 
         table {
             width: 100%;
-            border-collapse: separate;
-            border-spacing: 0;
-            border-radius: 12px;
-            overflow: hidden;
+            border-collapse: collapse;
+            background: white;
         }
 
         thead {
-            background: #f9fafb;
+            background: linear-gradient(135deg, #f7fafc 0%, #edf2f7 100%);
         }
 
-        table th, table td {
-            padding: 15px 12px;
+        th {
+            padding: 18px 20px;
             text-align: left;
+            font-weight: 700;
+            font-size: 13px;
+            color: #2d3748;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            border-bottom: 2px solid #e2e8f0;
         }
 
-        table th {
-            font-weight: 600;
+        td {
+            padding: 16px 20px;
             font-size: 14px;
-            color: #6b7280;
-        }
-
-        table td {
-            font-size: 14px;
-            color: #374151;
-            background: #ffffff;
+            color: #4a5568;
+            border-bottom: 1px solid #f1f5f9;
         }
 
         tbody tr {
-            transition: background 0.2s ease;
+            transition: all 0.2s ease;
         }
 
         tbody tr:hover {
-            background: #f3f4f6;
+            background: #f8fafc;
+            transform: scale(1.001);
+        }
+
+        .action-badge {
+            display: inline-block;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .action-login {
+            background: #c6f6d5;
+            color: #22543d;
+        }
+
+        .action-logout {
+            background: #fed7d7;
+            color: #742a2a;
+        }
+
+        .action-create {
+            background: #bee3f8;
+            color: #2a4365;
+        }
+
+        .action-update {
+            background: #fef5e7;
+            color: #744210;
+        }
+
+        .action-edit {
+            background: #fef5e7;
+            color: #744210;
+        }
+
+        .action-delete {
+            background: #fbb6ce;
+            color: #702459;
+        }
+
+        .action-view {
+            background: #e9d8fd;
+            color: #553c9a;
+        }
+
+        .action-share {
+            background: #d6f5d6;
+            color: #2f855a;
+        }
+
+        .persona-name {
+            font-weight: 600;
+            color: #2d3748;
+        }
+
+        .ip-address {
+            font-family: 'Courier New', monospace;
+            background: #f7fafc;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 13px;
+        }
+
+        .date-time {
+            white-space: nowrap;
+            font-weight: 500;
         }
 
         .pagination {
-            margin-top: 20px;
-            text-align: center;
+            margin-top: 30px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .pagination a, .pagination span {
+            padding: 12px 18px;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 14px;
+            text-decoration: none;
+            transition: all 0.2s ease;
         }
 
         .pagination a {
-            text-decoration: none;
-            padding: 8px 14px;
-            background: #4f46e5;
+            background: #667eea;
             color: white;
-            border-radius: 6px;
-            margin: 0 4px;
-            font-size: 14px;
-            transition: background 0.2s ease;
         }
 
         .pagination a:hover {
-            background: #4338ca;
+            background: #5a67d8;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
         }
 
         .pagination span {
-            margin: 0 10px;
-            font-size: 14px;
-            color: #6b7280;
+            background: #f7fafc;
+            color: #718096;
+            border: 1px solid #e2e8f0;
         }
 
-        p {
+        .no-data {
             text-align: center;
-            color: #6b7280;
-            font-size: 15px;
+            padding: 60px 30px;
+            color: #718096;
+            font-size: 16px;
+        }
+
+        .no-data-icon {
+            font-size: 48px;
+            margin-bottom: 20px;
+            opacity: 0.5;
+        }
+
+        @media (max-width: 768px) {
+            .filter-group {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .stats {
+                margin-left: 0;
+                margin-top: 15px;
+            }
+
+            .stat-item {
+                flex: 1;
+            }
+
+            th, td {
+                padding: 12px 15px;
+            }
         }
     </style>
 </head>
 <body>
-    <div class="log-container">
-        {% if logs %}
-            <table>
-                <thead>
-                    <tr>
-                        <th>Action</th>
-                        <th>Description</th>
-                        <th>Persona</th>
-                        <th>IP Address</th>
-                        <th>Date</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for log in logs %}
-                        <tr>
-                            <td>{{ log.action_type }}</td>
-                            <td>{{ log.description|default:"—" }}</td>
-                            <td>
-                                {% if log.persona %}
-                                    {{ log.persona.persona_name }}
-                                {% else %}
-                                    —
-                                {% endif %}
-                            </td>
-                            <td>{{ log.ip_address|default:"—" }}</td>
-                            <td>{{ log.created_at|date:"Y-m-d H:i" }}</td>
-                        </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
+    <div class="dashboard-container">
+        <div class="header">
+            <h1>Activity Log Dashboard</h1>
+        </div>
 
-            <div class="pagination">
-                {% if logs.has_previous %}
-                    <a href="?page={{ logs.previous_page_number }}">Previous</a>
-                {% endif %}
-
-                <span>Page {{ logs.number }} of {{ logs.paginator.num_pages }}</span>
-
-                {% if logs.has_next %}
-                    <a href="?page={{ logs.next_page_number }}">Next</a>
-                {% endif %}
+        <div class="controls-section">
+            <div class="filter-group">
+                <label class="filter-label" for="actionFilter">Filter by Action:</label>
+                <select id="actionFilter" class="filter-select">
+                    <option value="">All Actions</option>
+                    <option value="LOGIN">Login</option>
+                    <option value="LOGOUT">Logout</option>
+                    <option value="CREATE">Create</option>
+                    <option value="EDIT">Edit</option>
+                    <option value="SHARE">Share</option>
+                </select>
+                
+                <label class="filter-label" for="personaFilter">Filter by Persona:</label>
+                <select id="personaFilter" class="filter-select">
+                    <option value="">All Personas</option>
+                </select>
+                
+                <button class="clear-filter" onclick="clearFilter()">Clear Filters</button>
+                
+                <div class="stats">
+                    <div class="stat-item">
+                        <div class="stat-number" id="totalEntries">0</div>
+                        <div class="stat-label">Total Entries</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number" id="filteredEntries">0</div>
+                        <div class="stat-label">Filtered</div>
+                    </div>
+                </div>
             </div>
-        {% else %}
-            <p>No activity log entries found.</p>
-        {% endif %}
+        </div>
+
+        <div class="table-container">
+            {% if logs %}
+                <div class="table-wrapper">
+                    <table id="activityTable">
+                        <thead>
+                            <tr>
+                                <th>Action</th>
+                                <th>Description</th>
+                                <th>Persona</th>
+                                <th>IP Address</th>
+                                <th>Date & Time</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tableBody">
+                            {% for log in logs %}
+                                <tr data-action="{{ log.action_type }}" data-persona="{% if log.persona %}{{ log.persona.persona_name }}{% else %}—{% endif %}">
+                                    <td>
+                                        <span class="action-badge action-{{ log.action_type|lower }}">
+                                            {{ log.action_type }}
+                                        </span>
+                                    </td>
+                                    <td>{{ log.description|default:"—" }}</td>
+                                    <td>
+                                        {% if log.persona %}
+                                            <span class="persona-name">{{ log.persona.persona_name }}</span>
+                                        {% else %}
+                                            —
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        {% if log.ip_address %}
+                                            <span class="ip-address">{{ log.ip_address }}</span>
+                                        {% else %}
+                                            —
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        <span class="date-time">{{ log.created_at|date:"M d, Y H:i" }}</span>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="pagination">
+                    {% if logs.has_previous %}
+                        <a href="?page={{ logs.previous_page_number }}&action={{ request.GET.action }}&persona={{ request.GET.persona }}">← Previous</a>
+                    {% endif %}
+
+                    <span>Page {{ logs.number }} of {{ logs.paginator.num_pages }}</span>
+
+                    {% if logs.has_next %}
+                        <a href="?page={{ logs.next_page_number }}&action={{ request.GET.action }}&persona={{ request.GET.persona }}">Next →</a>
+                    {% endif %}
+                </div>
+            {% else %}
+                <div class="no-data">
+                    <div class="no-data-icon">📊</div>
+                    <h3>No Activity Data Available</h3>
+                    <p>There are currently no activity log entries to display.</p>
+                </div>
+            {% endif %}
+        </div>
     </div>
+
+    <script>
+        // Initialize statistics and filtering
+        document.addEventListener('DOMContentLoaded', function() {
+            populatePersonaFilter();
+            updateStatistics();
+            
+            // Set up filter functionality
+            const actionFilter = document.getElementById('actionFilter');
+            const personaFilter = document.getElementById('personaFilter');
+            
+            actionFilter.addEventListener('change', function() {
+                applyFilters();
+            });
+            
+            personaFilter.addEventListener('change', function() {
+                applyFilters();
+            });
+
+            // Check URL parameters for existing filters
+            const urlParams = new URLSearchParams(window.location.search);
+            const actionParam = urlParams.get('action');
+            const personaParam = urlParams.get('persona');
+            
+            if (actionParam) {
+                actionFilter.value = actionParam;
+            }
+            if (personaParam) {
+                personaFilter.value = personaParam;
+            }
+            
+            if (actionParam || personaParam) {
+                applyFilters();
+            }
+        });
+
+        function populatePersonaFilter() {
+            const personaFilter = document.getElementById('personaFilter');
+            const rows = document.querySelectorAll('#tableBody tr');
+            const personas = new Set();
+
+            rows.forEach(row => {
+                const persona = row.getAttribute('data-persona');
+                if (persona && persona !== '—') {
+                    personas.add(persona);
+                }
+            });
+
+            // Sort personas alphabetically
+            const sortedPersonas = Array.from(personas).sort();
+            
+            // Add persona options to filter
+            sortedPersonas.forEach(persona => {
+                const option = document.createElement('option');
+                option.value = persona;
+                option.textContent = persona;
+                personaFilter.appendChild(option);
+            });
+        }
+
+        function applyFilters() {
+            const actionFilter = document.getElementById('actionFilter');
+            const personaFilter = document.getElementById('personaFilter');
+            const actionType = actionFilter.value;
+            const personaName = personaFilter.value;
+            
+            const rows = document.querySelectorAll('#tableBody tr');
+            let visibleCount = 0;
+
+            rows.forEach(row => {
+                const rowAction = row.getAttribute('data-action');
+                const rowPersona = row.getAttribute('data-persona');
+                
+                const actionMatch = !actionType || rowAction === actionType;
+                const personaMatch = !personaName || rowPersona === personaName;
+                
+                if (actionMatch && personaMatch) {
+                    row.style.display = '';
+                    visibleCount++;
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+
+            // Update filtered count
+            document.getElementById('filteredEntries').textContent = visibleCount;
+
+            // Update URL without refreshing page
+            const url = new URL(window.location);
+            if (actionType) {
+                url.searchParams.set('action', actionType);
+            } else {
+                url.searchParams.delete('action');
+            }
+            
+            if (personaName) {
+                url.searchParams.set('persona', personaName);
+            } else {
+                url.searchParams.delete('persona');
+            }
+            
+            window.history.replaceState({}, '', url);
+        }
+
+        function clearFilter() {
+            const actionFilter = document.getElementById('actionFilter');
+            const personaFilter = document.getElementById('personaFilter');
+            actionFilter.value = '';
+            personaFilter.value = '';
+            applyFilters();
+        }
+
+        function updateStatistics() {
+            const totalRows = document.querySelectorAll('#tableBody tr').length;
+            document.getElementById('totalEntries').textContent = totalRows;
+            document.getElementById('filteredEntries').textContent = totalRows;
+        }
+
+        // Add smooth scrolling for pagination
+        document.querySelectorAll('.pagination a').forEach(link => {
+            link.addEventListener('click', function(e) {
+                // Add loading state
+                this.style.opacity = '0.7';
+                this.textContent = 'Loading...';
+            });
+        });
+    </script>
 </body>
 </html>
