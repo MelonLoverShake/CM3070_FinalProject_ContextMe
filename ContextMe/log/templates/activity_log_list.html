@@ -106,6 +106,32 @@
             transform: translateY(-1px);
         }
 
+        .download-options {
+            display: flex;
+            gap: 10px;
+        }
+
+        .download-btn {
+            padding: 10px 16px;
+            background: #48bb78;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .download-btn:hover {
+            background: #38a169;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(72, 187, 120, 0.3);
+        }
+
         .stats {
             display: flex;
             gap: 15px;
@@ -341,6 +367,15 @@
                 
                 <button class="clear-filter" onclick="clearFilter()">Clear Filters</button>
                 
+                <div class="download-options">
+                    <button class="download-btn" onclick="downloadData('pdf')">
+                        📄 Download PDF
+                    </button>
+                    <button class="download-btn" onclick="downloadData('txt')">
+                        📝 Download TXT
+                    </button>
+                </div>
+                
                 <div class="stats">
                     <div class="stat-item">
                         <div class="stat-number" id="totalEntries">0</div>
@@ -529,6 +564,35 @@
             actionFilter.value = '';
             personaFilter.value = '';
             applyFilters();
+        }
+
+        function downloadData(format) {
+            const actionFilter = document.getElementById('actionFilter').value;
+            const personaFilter = document.getElementById('personaFilter').value;
+            
+            // Build URL with current filters
+            let downloadUrl = `/logs/download/${format}/`;
+            const params = new URLSearchParams();
+            
+            if (actionFilter) {
+                params.append('action', actionFilter);
+            }
+            
+            if (personaFilter) {
+                params.append('persona', personaFilter);
+            }
+            
+            if (params.toString()) {
+                downloadUrl += '?' + params.toString();
+            }
+            
+            // Create temporary link and trigger download
+            const link = document.createElement('a');
+            link.href = downloadUrl;
+            link.download = `activity_log_${new Date().toISOString().split('T')[0]}.${format}`;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
         }
 
         function updateStatistics() {
