@@ -48,3 +48,7 @@ class OTPForm(forms.Form):
             'maxlength': '6'
         })
     )
+
+class ImageUploadForm(forms.Form):
+    title = forms.CharField(max_length=100)
+    image = forms.ImageField()

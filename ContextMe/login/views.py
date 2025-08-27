@@ -34,7 +34,7 @@ from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer
 from reportlab.lib.enums import TA_LEFT, TA_CENTER
 import io
 from django.http import HttpResponse
-
+from django.db import transaction
 
 @ratelimit(key="ip", rate='10/m',block=True)
 def login_view(request):
@@ -128,9 +128,6 @@ def verify_otp_view(request):
                 try:
                     update_response = supabase.table('login_user').update({
                         'last_login_ip': ip,
-                        'device': ua['device'],
-                        'os': ua['os'],
-                        'browser': ua['browser'],
                         'last_login_time': now
                     }).eq('email', email).execute()
 
@@ -138,10 +135,62 @@ def verify_otp_view(request):
                 except Exception as e:
                     print("[ERROR] Failed to update Supabase:", e)
 
+                # ✅ LOG SUCCESSFUL LOGIN ACTIVITY
+                try:
+                    from log.models import ActivityLog
+                    django_user = None
+                    try:
+                        # If you have a Django User model that corresponds to Supabase users
+                        django_user = User.objects.get(email=email)
+                    except User.DoesNotExist:
+                        pass
+
+                    with transaction.atomic():
+                        activity_log = ActivityLog.objects.create(
+                            user=django_user,  # Will be None if no Django user found
+                            persona=None,  # No specific persona for login
+                            action_type='LOGIN',
+                            description=f"User '{email}' successfully logged in via OTP verification",
+                            ip_address=ip,
+                            # You might want to add additional fields like user_agent if your model supports it
+                        )
+                    
+                    print(f"✅ Login activity logged successfully: User {email}, Log ID: {activity_log.id}")
+                    
+                except Exception as log_error:
+                    print(f"❌ Failed to log login activity for {email}: {log_error}")
+                    import traceback
+                    traceback.print_exc()
+
                 del request.session['otp_email']
                 messages.success(request, 'Welcome back!')
                 return redirect('dashboard')
             else:
+                # ✅ LOG FAILED LOGIN ATTEMPT
+                try:
+                    # Try to get Django User object for failed login logging
+                    django_user = None
+                    try:
+                        django_user = User.objects.get(email=email)
+                    except User.DoesNotExist:
+                        pass
+
+                    with transaction.atomic():
+                        activity_log = ActivityLog.objects.create(
+                            user=django_user,  
+                            persona=None,
+                            action_type='LOGIN_FAILED',
+                            description=f"Failed OTP verification for '{email}': {result['error']}",
+                            ip_address=get_client_ip(request),
+                        )
+                    
+                    print(f"⚠️ Failed login attempt logged: User {email}, Log ID: {activity_log.id}")
+                    
+                except Exception as log_error:
+                    print(f"❌ Failed to log failed login attempt for {email}: {log_error}")
+                    import traceback
+                    traceback.print_exc()
+
                 messages.error(request, f"Invalid code: {result['error']}")
     else:
         form = OTPForm()
@@ -335,16 +384,12 @@ def logout_view(request):
 
 @ratelimit(key="ip", rate='10/m',block=True)
 def user_profile_view(request):
-    # Try to get email from different possible session keys
+    # ---------- Existing user retrieval logic ----------
     user_email = None
-    
-    # Check if supabase_user contains email info
     supabase_user = request.session.get('supabase_user')
     if supabase_user:
-        # If supabase_user is a dict, get email from it
         if isinstance(supabase_user, dict):
             user_email = supabase_user.get('email')
-        # If it's a string (JSON), parse it first
         elif isinstance(supabase_user, str):
             import json
             try:
@@ -352,35 +397,50 @@ def user_profile_view(request):
                 user_email = user_data.get('email')
             except json.JSONDecodeError:
                 pass
-    
-    # Fallback: check if email is directly stored in session
     if not user_email:
         user_email = request.session.get('user_email') or request.session.get('email')
     
-    # If we found an email, look up the user in login_user table
     if user_email:
         try:
             user_profile = get_object_or_404(LoginUser, email=user_email)
         except:
-            # Fallback to Django's built-in User model if LoginUser doesn't exist
             user_profile = get_object_or_404(User, email=user_email)
     else:
-        # Final fallback to authenticated user
         if request.user.is_authenticated:
             user_profile = request.user
         else:
-            # Redirect to login if no user info found
             from django.shortcuts import redirect
             return redirect('login')
-    
-    # FIXED: Check if user has completed consent by querying Supabase
-    user_has_consent = False
-    if user_profile:
-        user_has_consent = check_user_consent(user_profile)
-    
+
+    user_has_consent = check_user_consent(user_profile) if user_profile else False
+
+    # ---------- NEW: handle image upload ----------
+    if request.method == 'POST':
+        form = ImageUploadForm(request.POST, request.FILES)
+        if form.is_valid():
+            file = form.cleaned_data['image']
+
+            # Upload directly to Cloudinary
+            response = cloudinary.uploader.upload(file)
+            direct_link = response['secure_url']
+
+            # Save link in Supabase (example table: 'user_images')
+            supabase.table("user_images").insert({
+                "user_email": user_email,
+                "image_url": direct_link
+            }).execute()
+            
+            return redirect('user_profile')  # refresh to show new image
+    else:
+        form = ImageUploadForm()
+        
+    images = supabase.table("user_images").select("*").eq("user_email", user_email).execute().data
+
     return render(request, 'profile.html', {
         'user': user_profile,
-        'user_has_consent': user_has_consent
+        'user_has_consent': user_has_consent,
+        'form': form,
+        'images': images
     })
 
 def check_user_consent(user_profile):

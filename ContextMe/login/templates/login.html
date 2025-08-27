@@ -233,7 +233,7 @@
 
         /* Form Styling */
         .login-form {
-            margin-bottom: 2rem;
+            margin-bottom: 1.5rem;
         }
 
         .form-group {
@@ -324,6 +324,70 @@
             transform: translateX(3px);
         }
 
+        /* Forgot Password Link */
+        .forgot-password-container {
+            text-align: center;
+            margin: 1.5rem 0 2rem 0;
+            padding: 1rem;
+            background: linear-gradient(135deg, rgba(255, 107, 157, 0.03), rgba(168, 85, 247, 0.03));
+            border-radius: 15px;
+            border: 1px solid rgba(255, 107, 157, 0.08);
+        }
+
+        .forgot-password-link {
+            color: var(--cute-purple);
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.95rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            border-radius: 12px;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .forgot-password-link::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(168, 85, 247, 0.1), transparent);
+            transition: left 0.5s;
+        }
+
+        .forgot-password-link:hover {
+            color: var(--cute-pink);
+            transform: translateY(-2px) scale(1.05);
+            background: rgba(255, 107, 157, 0.08);
+            box-shadow: 0 4px 16px rgba(255, 107, 157, 0.2);
+            text-decoration: none;
+        }
+
+        .forgot-password-link:hover::before {
+            left: 100%;
+        }
+
+        .forgot-password-link i {
+            font-size: 0.9rem;
+            transition: transform 0.3s ease;
+        }
+
+        .forgot-password-link:hover i {
+            transform: rotate(15deg) scale(1.1);
+        }
+
+        .forgot-password-text {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            margin-bottom: 0.8rem;
+            font-weight: 500;
+        }
+
         /* Helper Text */
         .helper-text {
             text-align: center;
@@ -383,6 +447,11 @@
                 height: 60px;
                 font-size: 1.5rem;
             }
+
+            .forgot-password-link {
+                font-size: 0.9rem;
+                padding: 0.4rem 0.8rem;
+            }
         }
 
         /* Additional cute elements */
@@ -441,6 +510,15 @@
                 <i class="fas fa-paper-plane"></i>
             </button>
         </form>
+
+        <!-- Forgot Password Link -->
+        <div class="forgot-password-container">
+            <p class="forgot-password-text">Can't access your account?</p>
+            <a href="http://localhost:8000/auth/change-password/" class="forgot-password-link">
+                <i class="fas fa-magic"></i>
+                Reset Password
+            </a>
+        </div>
         
         <div class="helper-text">
             We'll send you a secure login code via email ✨
@@ -477,6 +555,19 @@
                         setTimeout(() => {
                             createSparkle(this);
                         }, i * 100);
+                    }
+                });
+            }
+
+            // Add sparkle effect on forgot password link hover
+            const forgotLink = document.querySelector('.forgot-password-link');
+            if (forgotLink) {
+                forgotLink.addEventListener('mouseenter', function() {
+                    // Create temporary sparkles
+                    for (let i = 0; i < 2; i++) {
+                        setTimeout(() => {
+                            createSparkle(this);
+                        }, i * 150);
                     }
                 });
             }
