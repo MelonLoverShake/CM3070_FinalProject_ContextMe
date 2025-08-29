@@ -9,10 +9,14 @@ class Admin_users(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     admin_level = models.IntegerField(default=1)
+    security_QAns = models.TextField(editable=True)
 
     def check_password(self, raw_password):
         """Check if the provided password is correct"""
         return check_password(raw_password, self.password)
+
+    def check_SecurityQ(self, raw_SecurityQ):
+        return(raw_SecurityQ, self.security_QAns)
 
     def __str__(self):
         return self.username
