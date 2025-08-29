@@ -23,10 +23,10 @@ handler404 = custom_404_view
 
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
     path('auth', include('login.urls')),
     path('main/', include('main.urls')),
     path('consent/',include('consent.urls')),
     path('logs/', include('log.urls')),
     path('', RedirectView.as_view(url='/auth/login/', permanent=False), name='home'),
+    path('admin/',include('Admin.urls')),
 ]
