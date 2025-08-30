@@ -1,1 +1,669 @@
-<p>This is a dashboard.</p>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ContextMe - Admin Dashboard</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #f8fafb;
+            color: #1a202c;
+            line-height: 1.6;
+        }
+
+        .dashboard-container {
+            max-width: 1440px;
+            margin: 0 auto;
+            padding: 24px;
+            min-height: 100vh;
+        }
+
+        .header {
+            background: white;
+            border-radius: 16px;
+            padding: 32px;
+            margin-bottom: 32px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.03), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+            border: 1px solid #e2e8f0;
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 24px;
+        }
+
+        .logo-section h1 {
+            font-size: 2.25rem;
+            font-weight: 700;
+            color: #1a202c;
+            letter-spacing: -0.025em;
+        }
+
+        .logo-section p {
+            color: #64748b;
+            margin-top: 4px;
+            font-size: 1rem;
+            font-weight: 500;
+        }
+
+        .admin-info {
+            text-align: right;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .admin-avatar {
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            background: linear-gradient(135deg, #3b82f6, #1e40af);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+            font-size: 1.125rem;
+        }
+
+        .admin-details .admin-name {
+            font-size: 1.125rem;
+            font-weight: 600;
+            color: #1a202c;
+        }
+
+        .admin-details .admin-role {
+            color: #3b82f6;
+            font-size: 0.875rem;
+            font-weight: 500;
+            margin-top: 2px;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 24px;
+            margin-bottom: 32px;
+        }
+
+        .stat-card {
+            background: white;
+            border-radius: 16px;
+            padding: 32px;
+            text-align: center;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.03), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+            border: 1px solid #e2e8f0;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, #3b82f6, #1e40af);
+            transform: scaleX(0);
+            transition: transform 0.3s ease;
+        }
+
+        .stat-card:hover::before {
+            transform: scaleX(1);
+        }
+
+        .stat-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.05), 0 10px 10px -5px rgba(0, 0, 0, 0.02);
+            border-color: #cbd5e0;
+        }
+
+        .stat-icon {
+            width: 56px;
+            height: 56px;
+            border-radius: 12px;
+            background: linear-gradient(135deg, #eff6ff, #dbeafe);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 16px;
+            font-size: 1.5rem;
+            color: #3b82f6;
+        }
+
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #1a202c;
+            margin-bottom: 8px;
+            letter-spacing: -0.025em;
+        }
+
+        .stat-label {
+            color: #64748b;
+            font-size: 1rem;
+            font-weight: 500;
+        }
+
+        .users-section {
+            background: white;
+            border-radius: 16px;
+            padding: 32px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.03), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+            border: 1px solid #e2e8f0;
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 32px;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .section-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #1a202c;
+            letter-spacing: -0.025em;
+        }
+
+        .search-box {
+            position: relative;
+            max-width: 320px;
+            width: 100%;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 12px 20px 12px 48px;
+            border: 1px solid #d1d5db;
+            border-radius: 12px;
+            font-size: 0.875rem;
+            transition: all 0.2s ease;
+            background: #f9fafb;
+            font-weight: 500;
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: #3b82f6;
+            background: white;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #9ca3af;
+            font-size: 1rem;
+        }
+
+        .table-container {
+            overflow-x: auto;
+            margin-top: 24px;
+        }
+
+        .users-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .users-table th,
+        .users-table td {
+            padding: 16px 20px;
+            text-align: left;
+            border-bottom: 1px solid #f1f5f9;
+        }
+
+        .users-table th {
+            background: #f8fafc;
+            font-weight: 600;
+            color: #475569;
+            font-size: 0.875rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .users-table tbody tr {
+            transition: all 0.2s ease;
+        }
+
+        .users-table tbody tr:hover {
+            background: #f8fafc;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            background: linear-gradient(135deg, #3b82f6, #1e40af);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+            font-size: 0.875rem;
+            flex-shrink: 0;
+        }
+
+        .user-details h4 {
+            font-weight: 600;
+            color: #1a202c;
+            margin-bottom: 2px;
+            font-size: 0.875rem;
+        }
+
+        .user-email {
+            color: #64748b;
+            font-size: 0.8125rem;
+            font-weight: 500;
+        }
+
+        .persona-badge {
+            background: linear-gradient(135deg, #eff6ff, #dbeafe);
+            color: #1e40af;
+            padding: 6px 12px;
+            border-radius: 8px;
+            font-size: 0.8125rem;
+            font-weight: 600;
+            display: inline-block;
+            border: 1px solid #bfdbfe;
+        }
+
+        .status-badge {
+            padding: 6px 12px;
+            border-radius: 8px;
+            font-size: 0.8125rem;
+            font-weight: 600;
+        }
+
+        .status-active {
+            background: #dcfce7;
+            color: #166534;
+            border: 1px solid #bbf7d0;
+        }
+
+        .status-inactive {
+            background: #fef3c7;
+            color: #92400e;
+            border: 1px solid #fde68a;
+        }
+
+        .action-btn {
+            background: white;
+            border: 1px solid #d1d5db;
+            border-radius: 8px;
+            padding: 8px 16px;
+            cursor: pointer;
+            color: #374151;
+            font-size: 0.8125rem;
+            font-weight: 500;
+            transition: all 0.2s ease;
+        }
+
+        .action-btn:hover {
+            border-color: #3b82f6;
+            color: #3b82f6;
+            background: #f0f9ff;
+            transform: translateY(-1px);
+        }
+
+        .logout-btn {
+            background: #fee2e2;
+            border: 1px solid #fecaca;
+            color: #dc2626;
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-size: 0.875rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .logout-btn:hover {
+            background: #fecaca;
+            border-color: #fca5a5;
+        }
+
+        @media (max-width: 768px) {
+            .dashboard-container {
+                padding: 16px;
+            }
+
+            .header-content {
+                text-align: center;
+                flex-direction: column;
+            }
+
+            .admin-info {
+                text-align: center;
+                justify-content: center;
+            }
+
+            .logo-section h1 {
+                font-size: 1.875rem;
+            }
+
+            .section-header {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .search-box {
+                max-width: none;
+            }
+
+            .users-table {
+                font-size: 0.875rem;
+            }
+
+            .users-table th,
+            .users-table td {
+                padding: 12px 16px;
+            }
+
+            .stat-number {
+                font-size: 2rem;
+            }
+
+            .stats-grid {
+                grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            }
+        }
+
+        .loading {
+            opacity: 0;
+            animation: fadeIn 0.8s ease-out forwards;
+        }
+
+        @keyframes fadeIn {
+            to {
+                opacity: 1;
+            }
+        }
+
+        .metric-change {
+            font-size: 0.75rem;
+            font-weight: 500;
+            margin-top: 4px;
+        }
+
+        .metric-change.positive {
+            color: #059669;
+        }
+
+        .metric-change.negative {
+            color: #dc2626;
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard-container loading">
+        <header class="header">
+            <div class="header-content">
+                <div class="logo-section">
+                    <h1>ContextMe</h1>
+                    <p>Admin Dashboard</p>
+                </div>
+                <div class="admin-info">
+                    <div class="admin-avatar">{{ admin_username|default:"A"|first|upper }}</div>
+                    <div class="admin-details">
+                        <div class="admin-name">{{ admin_username|default:"Administrator" }}</div>
+                        <div class="admin-role">Administrator</div>
+                    </div>
+                    <button class="logout-btn">Logout</button>
+                </div>
+            </div>
+        </header>
+
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-icon">👥</div>
+                <div class="stat-number" data-target="{{ total_users|default:247 }}">0</div>
+                <div class="stat-label">Total Users</div>
+                <div class="metric-change positive">+12% from last month</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">🎭</div>
+                <div class="stat-number" data-target="{{ total_personas|default:1823 }}">0</div>
+                <div class="stat-label">Total Personas</div>
+                <div class="metric-change positive">+8% from last month</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">📊</div>
+                <div class="stat-number" data-target="7.4" data-decimal="true">0</div>
+                <div class="stat-label">Avg Personas per User</div>
+                <div class="metric-change positive">+0.3 from last month</div>
+            </div>
+        </div>
+
+        <div class="users-section">
+            <div class="section-header">
+                <h2 class="section-title">User Management</h2>
+                <div class="search-box">
+                    <input type="text" class="search-input" placeholder="Search users..." id="searchInput">
+                    <span class="search-icon">🔍</span>
+                </div>
+            </div>
+
+            <div class="table-container">
+                <table class="users-table" id="usersTable">
+                    <thead>
+                        <tr>
+                            <th>User</th>
+                            <th>Personas</th>
+                            <th>Last Active</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for login in recent_logins|default:"" %}
+                        <tr>
+                            <td>
+                                <div class="user-info">
+                                    <div class="user-avatar">{{ login.email|first|upper }}</div>
+                                    <div class="user-details">
+                                        <h4>{{ login.email|truncatechars:20 }}</h4>
+                                        <div class="user-email">{{ login.email }}</div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td><span class="persona-badge">{{ login.persona_count|default:"0" }}</span></td>
+                            <td>{{ login.last_login_time|date:"M d, Y" }}</td>
+                            <td><span class="status-badge status-active">Active</span></td>
+                            <td><button class="action-btn">View Details</button></td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td>
+                                <div class="user-info">
+                                    <div class="user-avatar">AM</div>
+                                    <div class="user-details">
+                                        <h4>Alex Martinez</h4>
+                                        <div class="user-email">alex.martinez@email.com</div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td><span class="persona-badge">12</span></td>
+                            <td>2 hours ago</td>
+                            <td><span class="status-badge status-active">Active</span></td>
+                            <td><button class="action-btn">View Details</button></td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <div class="user-info">
+                                    <div class="user-avatar">SJ</div>
+                                    <div class="user-details">
+                                        <h4>Sarah Johnson</h4>
+                                        <div class="user-email">sarah.j@email.com</div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td><span class="persona-badge">8</span></td>
+                            <td>1 day ago</td>
+                            <td><span class="status-badge status-active">Active</span></td>
+                            <td><button class="action-btn">View Details</button></td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <div class="user-info">
+                                    <div class="user-avatar">MC</div>
+                                    <div class="user-details">
+                                        <h4>Michael Chen</h4>
+                                        <div class="user-email">m.chen@email.com</div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td><span class="persona-badge">15</span></td>
+                            <td>3 hours ago</td>
+                            <td><span class="status-badge status-active">Active</span></td>
+                            <td><button class="action-btn">View Details</button></td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <div class="user-info">
+                                    <div class="user-avatar">ED</div>
+                                    <div class="user-details">
+                                        <h4>Emma Davis</h4>
+                                        <div class="user-email">emma.davis@email.com</div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td><span class="persona-badge">6</span></td>
+                            <td>1 week ago</td>
+                            <td><span class="status-badge status-inactive">Inactive</span></td>
+                            <td><button class="action-btn">View Details</button></td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <div class="user-info">
+                                    <div class="user-avatar">RW</div>
+                                    <div class="user-details">
+                                        <h4>Robert Wilson</h4>
+                                        <div class="user-email">r.wilson@email.com</div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td><span class="persona-badge">23</span></td>
+                            <td>5 minutes ago</td>
+                            <td><span class="status-badge status-active">Active</span></td>
+                            <td><button class="action-btn">View Details</button></td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Search functionality
+        document.getElementById('searchInput').addEventListener('input', function(e) {
+            const searchTerm = e.target.value.toLowerCase();
+            const tableRows = document.querySelectorAll('#usersTable tbody tr');
+            
+            tableRows.forEach(row => {
+                const userName = row.querySelector('.user-details h4').textContent.toLowerCase();
+                const userEmail = row.querySelector('.user-email').textContent.toLowerCase();
+                
+                if (userName.includes(searchTerm) || userEmail.includes(searchTerm)) {
+                    row.style.display = '';
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+        });
+
+        // Action button functionality
+        document.querySelectorAll('.action-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const userName = this.closest('tr').querySelector('.user-details h4').textContent;
+                console.log(`Viewing details for ${userName}`);
+            });
+        });
+
+        // Logout functionality
+        document.querySelector('.logout-btn').addEventListener('click', function() {
+            if (confirm('Are you sure you want to logout?')) {
+                window.location.href = '/admin/logout/';
+            }
+        });
+
+        // Animate stats on load
+        function animateStats() {
+            const statNumbers = document.querySelectorAll('.stat-number');
+            
+            statNumbers.forEach((stat) => {
+                const target = parseFloat(stat.getAttribute('data-target'));
+                const isDecimal = stat.getAttribute('data-decimal') === 'true';
+                let current = 0;
+                const increment = target / 100;
+                
+                const timer = setInterval(() => {
+                    current += increment;
+                    if (current >= target) {
+                        stat.textContent = isDecimal ? target.toFixed(1) : Math.floor(target);
+                        clearInterval(timer);
+                    } else {
+                        stat.textContent = isDecimal ? current.toFixed(1) : Math.floor(current);
+                    }
+                }, 20);
+            });
+        }
+
+        // Initialize animations when page loads
+        window.addEventListener('load', function() {
+            setTimeout(animateStats, 300);
+        });
+
+        // Intersection Observer for table rows
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach((entry, index) => {
+                if (entry.isIntersecting) {
+                    setTimeout(() => {
+                        entry.target.style.opacity = '1';
+                        entry.target.style.transform = 'translateY(0)';
+                    }, index * 50);
+                }
+            });
+        }, observerOptions);
+
+        // Initialize table row animations
+        document.querySelectorAll('#usersTable tbody tr').forEach((row) => {
+            row.style.opacity = '0';
+            row.style.transform = 'translateY(20px)';
+            row.style.transition = 'all 0.5s cubic-bezier(0.4, 0, 0.2, 1)';
+            observer.observe(row);
+        });
+    </script>
+</body>
+</html>
