@@ -418,7 +418,26 @@
         .metric-change.negative {
             color: #dc2626;
         }
+
+       .detail-links {
+    color: black;        /* text color */
+    text-decoration: none; /* removes underline */
+}
+
+.detail-links:visited {
+    color: black; /* visited link */
+}
+
+.detail-links:hover,
+.detail-links:active,
+.detail-links:focus {
+    color: black;        /* same color on all states */
+    text-decoration: none; /* no underline on hover/click */
+}
+
     </style>
+    <!-- Font Awesome Free CSS -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
 </head>
 <body>
     <div class="dashboard-container loading">
@@ -441,22 +460,19 @@
 
         <div class="stats-grid">
             <div class="stat-card">
-                <div class="stat-icon">👥</div>
+                <div class="stat-icon"><i class="fa-solid fa-users"></i></div>
                 <div class="stat-number" data-target="{{ total_users|default:247 }}">0</div>
                 <div class="stat-label">Total Users</div>
-                <div class="metric-change positive">+12% from last month</div>
             </div>
             <div class="stat-card">
-                <div class="stat-icon">🎭</div>
-                <div class="stat-number" data-target="{{ total_personas|default:1823 }}">0</div>
+                <div class="stat-icon"><i class="fa-solid fa-person-dress"></i></div>
+                <div class="stat-number" data-target="{{total_personas|default:1823 }}">0</div>
                 <div class="stat-label">Total Personas</div>
-                <div class="metric-change positive">+8% from last month</div>
             </div>
             <div class="stat-card">
-                <div class="stat-icon">📊</div>
-                <div class="stat-number" data-target="7.4" data-decimal="true">0</div>
+                <div class="stat-icon"><i class="fa-solid fa-person-half-dress"></i></div>
+                <div class="stat-number" data-target="{{average_personas|default:120}}" data-decimal="true">0</div>
                 <div class="stat-label">Avg Personas per User</div>
-                <div class="metric-change positive">+0.3 from last month</div>
             </div>
         </div>
 
@@ -465,7 +481,7 @@
                 <h2 class="section-title">User Management</h2>
                 <div class="search-box">
                     <input type="text" class="search-input" placeholder="Search users..." id="searchInput">
-                    <span class="search-icon">🔍</span>
+                    <span class="search-icon"><i class="fa-brands fa-searchengin"></i></span>
                 </div>
             </div>
 
@@ -475,7 +491,7 @@
                         <tr>
                             <th>User</th>
                             <th>Personas</th>
-                            <th>Last Active</th>
+                            <th></th>
                             <th>Status</th>
                             <th>Actions</th>
                         </tr>
@@ -487,15 +503,15 @@
                                 <div class="user-info">
                                     <div class="user-avatar">{{ login.email|first|upper }}</div>
                                     <div class="user-details">
-                                        <h4>{{ login.email|truncatechars:20 }}</h4>
+                                        <h4>{{ login.email|truncatechars:30 }}</h4>
                                         <div class="user-email">{{ login.email }}</div>
                                     </div>
                                 </div>
                             </td>
                             <td><span class="persona-badge">{{ login.persona_count|default:"0" }}</span></td>
-                            <td>{{ login.last_login_time|date:"M d, Y" }}</td>
+                            <td>{{ login.created_at|date:"M d, Y" }}</td>
                             <td><span class="status-badge status-active">Active</span></td>
-                            <td><button class="action-btn">View Details</button></td>
+                            <td><button class="action-btn"><a href="/admin/user-personas" class="detail-links">View Details</button></td>
                         </tr>
                         {% empty %}
                         <tr>

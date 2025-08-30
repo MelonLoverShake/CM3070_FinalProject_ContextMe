@@ -59,8 +59,14 @@ def Admin_Dashboard(request):
             'admin_username': admin_user.username,
             'admin_user': admin_user,
             'total_users': user_stats['total_users'],
+            'total_personas': user_stats['total_personas'],
+            'average_personas':user_stats['average_personas'],
+            'recent_logins': user_stats['recent_logins'],
         }
         return render(request, 'Admin_Dashboard.html', context)
     except Admin_users.DoesNotExist:
         return redirect('admin_login')
+
+def user_personas(request):
+    return render(request,'user_personas_list.html')
 

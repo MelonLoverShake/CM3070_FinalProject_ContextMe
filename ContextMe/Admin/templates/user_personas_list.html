@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Personas - john.doe@example.com</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .header {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            color: white;
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+
+        .header p {
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 1.1rem;
+            margin-bottom: 20px;
+        }
+
+        .stats {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            flex-wrap: wrap;
+        }
+
+        .stat-item {
+            background: rgba(255, 255, 255, 0.15);
+            padding: 15px 25px;
+            border-radius: 15px;
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 2rem;
+            font-weight: bold;
+            color: white;
+            display: block;
+        }
+
+        .stat-label {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 0.9rem;
+            margin-top: 5px;
+        }
+
+        .personas-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 25px;
+            margin-top: 30px;
+        }
+
+        .persona-card {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 25px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .persona-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+        }
+
+        .persona-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .persona-avatar {
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            color: white;
+            font-weight: bold;
+            margin-right: 15px;
+        }
+
+        .persona-title {
+            flex: 1;
+        }
+
+        .persona-name {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 5px;
+        }
+
+        .persona-role {
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .persona-description {
+            color: #555;
+            line-height: 1.6;
+            margin-bottom: 20px;
+        }
+
+        .persona-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-top: 15px;
+            border-top: 1px solid #eee;
+        }
+
+        .persona-date {
+            color: #888;
+            font-size: 0.85rem;
+        }
+
+        .persona-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn-primary {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-secondary {
+            background: #f8f9fa;
+            color: #666;
+            border: 1px solid #ddd;
+        }
+
+        .btn-secondary:hover {
+            background: #e9ecef;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        .empty-state h3 {
+            font-size: 1.5rem;
+            margin-bottom: 10px;
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 2rem;
+            }
+            
+            .stats {
+                gap: 15px;
+            }
+            
+            .personas-grid {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>User Personas</h1>
+            <p>john.doe@example.com</p>
+            <div class="stats">
+                <div class="stat-item">
+                    <span class="stat-number">3</span>
+                    <div class="stat-label">Active</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="personas-grid">
+            <div class="persona-card">
+                <div class="persona-header">
+                    <div class="persona-avatar">MC</div>
+                    <div class="persona-title">
+                        <div class="persona-name">Marketing Consultant</div>
+                        <div class="persona-role">Business Strategy</div>
+                    </div>
+                </div>
+                <div class="persona-description">
+                    Expert in digital marketing strategies, brand development, and customer acquisition. Specializes in helping businesses grow their online presence and increase conversion rates.
+                </div>
+                <div class="persona-meta">
+                    <div class="persona-date">Created: Jan 10, 2025</div>
+                    <div class="persona-actions">
+                        <a href="#" class="btn btn-primary">Chat</a>
+                        <a href="#" class="btn btn-secondary">Edit</a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="persona-card">
+                <div class="persona-header">
+                    <div class="persona-avatar">PT</div>
+                    <div class="persona-title">
+                        <div class="persona-name">Python Tutor</div>
+                        <div class="persona-role">Programming Education</div>
+                    </div>
+                </div>
+                <div class="persona-description">
+                    Patient and knowledgeable Python programming instructor. Helps beginners learn coding fundamentals and guides advanced developers through complex projects.
+                </div>
+                <div class="persona-meta">
+                    <div class="persona-date">Created: Jan 8, 2025</div>
+                    <div class="persona-actions">
+                        <a href="#" class="btn btn-primary">Chat</a>
+                        <a href="#" class="btn btn-secondary">Edit</a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="persona-card">
+                <div class="persona-header">
+                    <div class="persona-avatar">CC</div>
+                    <div class="persona-title">
+                        <div class="persona-name">Creative Writer</div>
+                        <div class="persona-role">Content Creation</div>
+                    </div>
+                </div>
+                <div class="persona-description">
+                    Imaginative storyteller and content creator with expertise in various writing styles. Crafts engaging narratives, blog posts, and creative content tailored to your needs.
+                </div>
+                <div class="persona-meta">
+                    <div class="persona-date">Created: Jan 5, 2025</div>
+                    <div class="persona-actions">
+                        <a href="#" class="btn btn-primary">Chat</a>
+                        <a href="#" class="btn btn-secondary">Edit</a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="persona-card">
+                <div class="persona-header">
+                    <div class="persona-avatar">FA</div>
+                    <div class="persona-title">
+                        <div class="persona-name">Financial Advisor</div>
+                        <div class="persona-role">Investment & Planning</div>
+                    </div>
+                </div>
+                <div class="persona-description">
+                    Professional financial planner specializing in investment strategies, retirement planning, and wealth management. Provides personalized advice for financial growth.
+                </div>
+                <div class="persona-meta">
+                    <div class="persona-date">Created: Dec 28, 2024</div>
+                    <div class="persona-actions">
+                        <a href="#" class="btn btn-primary">Chat</a>
+                        <a href="#" class="btn btn-secondary">Edit</a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="persona-card">
+                <div class="persona-header">
+                    <div class="persona-avatar">FC</div>
+                    <div class="persona-title">
+                        <div class="persona-name">Fitness Coach</div>
+                        <div class="persona-role">Health & Wellness</div>
+                    </div>
+                </div>
+                <div class="persona-description">
+                    Certified fitness trainer and nutrition expert. Creates personalized workout plans, provides nutritional guidance, and motivates you to achieve your health goals.
+                </div>
+                <div class="persona-meta">
+                    <div class="persona-date">Created: Dec 20, 2024</div>
+                    <div class="persona-actions">
+                        <a href="#" class="btn btn-primary">Chat</a>
+                        <a href="#" class="btn btn-secondary">Edit</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Add some interactive functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            // Add click handlers for buttons
+            const chatBtns = document.querySelectorAll('.btn-primary');
+            const editBtns = document.querySelectorAll('.btn-secondary');
+            
+            chatBtns.forEach(btn => {
+                btn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const personaName = this.closest('.persona-card').querySelector('.persona-name').textContent;
+                    alert(`Starting chat with ${personaName}...`);
+                });
+            });
+            
+            editBtns.forEach(btn => {
+                btn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const personaName = this.closest('.persona-card').querySelector('.persona-name').textContent;
+                    alert(`Editing ${personaName}...`);
+                });
+            });
+        });
+    </script>
+</body>
+</html>
